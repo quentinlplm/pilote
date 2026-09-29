@@ -1,0 +1,1625 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pilote</title>
+<meta name="description" content="Ton stock, tes envois et ta compta Vinted, dans ta poche.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1312" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pilote">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icones/icone-32.png">
+<link rel="apple-touch-icon" href="icones/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Mise en page : une app de téléphone, une colonne de 520 px maximum, barre d'onglets fixée en bas, fiches en plein écran. */
+:root{
+  --bg:#FFFFFF; --surface:#F3F5F4; --surface-2:#E9EDEB; --line:#E2E6E4; --line-2:#D5DAD8;
+  --ink:#151918; --ink2:#474F4D; --ink3:#5F6967;
+  --accent:#0A7A71; --accent-ink:#075E57; --accent-soft:#E2F1EE; --on-accent:#FFFFFF;
+  --warn:#9A3408; --warn-soft:#FFF0E5; --warn-strong:#C2410C; --on-warn:#FFFFFF;
+  --good:#13734A; --good-soft:#E4F3EA;
+  --bad:#B42318; --bad-soft:#FDECEA;
+  --violet:#4A4570; --violet-soft:#ECEAF3;
+  --bleu:#34506F; --bleu-soft:#E7EEF6;
+  --t1:#F3ECE4; --t1i:#8A6A4C; --t2:#E9ECEB; --t2i:#56615E; --t3:#E7EEF6; --t3i:#4A6380;
+  --t4:#EAF1EC; --t4i:#4D6B57; --t5:#F1E9EE; --t5i:#7A5A6C; --t6:#ECEAF3; --t6i:#5E5A7E;
+  --voile:rgba(15,19,18,.38);
+  --f-titre:'Bricolage Grotesque','Figtree',system-ui,sans-serif;
+  --f-texte:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1312; --surface:#182120; --surface-2:#202B29; --line:#2A3533; --line-2:#36433F;
+  --ink:#EEF3F1; --ink2:#C3CECA; --ink3:#9AA8A3;
+  --accent:#5CC8BC; --accent-ink:#86DCD2; --accent-soft:#16312E; --on-accent:#06231F;
+  --warn:#FFB38A; --warn-soft:#3A2114; --warn-strong:#F28A52; --on-warn:#1A0B03;
+  --good:#6FD49D; --good-soft:#13301F;
+  --bad:#FF8A80; --bad-soft:#3A1715;
+  --violet:#B9B3E8; --violet-soft:#25233A;
+  --bleu:#9DBAD9; --bleu-soft:#1B2733;
+  --t1:#2B241D; --t1i:#D8B99A; --t2:#222A28; --t2i:#AEBBB7; --t3:#1D2632; --t3i:#9FBAD8;
+  --t4:#1D2A22; --t4i:#9CC6A9; --t5:#2A2027; --t5i:#D3AFC3; --t6:#24223A; --t6i:#B8B3E0;
+  --voile:rgba(0,0,0,.55); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1312; --surface:#182120; --surface-2:#202B29; --line:#2A3533; --line-2:#36433F;
+  --ink:#EEF3F1; --ink2:#C3CECA; --ink3:#9AA8A3;
+  --accent:#5CC8BC; --accent-ink:#86DCD2; --accent-soft:#16312E; --on-accent:#06231F;
+  --warn:#FFB38A; --warn-soft:#3A2114; --warn-strong:#F28A52; --on-warn:#1A0B03;
+  --good:#6FD49D; --good-soft:#13301F;
+  --bad:#FF8A80; --bad-soft:#3A1715;
+  --violet:#B9B3E8; --violet-soft:#25233A;
+  --bleu:#9DBAD9; --bleu-soft:#1B2733;
+  --t1:#2B241D; --t1i:#D8B99A; --t2:#222A28; --t2i:#AEBBB7; --t3:#1D2632; --t3i:#9FBAD8;
+  --t4:#1D2A22; --t4i:#9CC6A9; --t5:#2A2027; --t5i:#D3AFC3; --t6:#24223A; --t6i:#B8B3E0;
+  --voile:rgba(0,0,0,.55); color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-texte);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#app{max-width:520px;margin:0 auto;min-height:100%;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.entete{padding:18px 16px 10px;display:flex;flex-direction:column;gap:12px}
+.ligne{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nom-app{font-family:var(--f-titre);font-size:27px;font-weight:700;letter-spacing:-.5px}
+.titre{margin:0;font-family:var(--f-titre);font-size:26px;font-weight:700;letter-spacing:-.4px;line-height:1.15;text-wrap:balance}
+.sous{margin:0;font-size:14px;color:var(--ink3)}
+.etat-sync{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--ink3)}
+.etat-sync i{width:7px;height:7px;border-radius:99px;background:var(--ink3);display:block}
+.etat-sync.on i{background:var(--good)}
+.bouton-rond{width:44px;height:44px;border-radius:99px;border:0;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.recherche{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;background:var(--surface);border-radius:10px;color:var(--ink3)}
+.recherche input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;color:var(--ink);outline:none;min-height:42px}
+.tuiles{padding:0 16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tuile{padding:10px 12px;border-radius:10px;border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
+.tuile b{font-family:var(--f-titre);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tuile span{font-size:12px;font-weight:500;color:var(--ink3)}
+.tuile.chaud{border-color:transparent;background:var(--warn-soft)} .tuile.chaud b,.tuile.chaud span{color:var(--warn)}
+.tuile.bon{border-color:transparent;background:var(--good-soft)} .tuile.bon b,.tuile.bon span{color:var(--good)}
+.puces{padding:14px 16px 12px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.puces::-webkit-scrollbar{display:none}
+.puce{flex-shrink:0;min-height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line-2);background:var(--bg);font-size:13px;font-weight:500;white-space:nowrap}
+.puce[aria-pressed="true"]{border:1.5px solid var(--accent);background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+.grille{padding:0 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+@media (min-width:500px){.grille{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.carte-art{display:flex;flex-direction:column;gap:3px;text-align:left;background:none;border:0;padding:0;min-width:0}
+.photo{position:relative;aspect-ratio:3/4;max-width:100%;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
+.photo svg{width:44%;height:auto}
+.t1{background:var(--t1);color:var(--t1i)} .t2{background:var(--t2);color:var(--t2i)} .t3{background:var(--t3);color:var(--t3i)}
+.t4{background:var(--t4);color:var(--t4i)} .t5{background:var(--t5);color:var(--t5i)} .t6{background:var(--t6);color:var(--t6i)}
+.pastille{position:absolute;top:8px;left:8px;padding:4px 8px;border-radius:6px;background:var(--bg);color:var(--ink);font-size:11px;font-weight:700;white-space:nowrap}
+.pastille.chaud{background:var(--warn-soft);color:var(--warn)}
+.pastille.dort{background:var(--ink);color:var(--bg)}
+.pastille.bon{background:var(--good-soft);color:var(--good)}
+.pastille.gris{background:var(--surface-2);color:var(--ink2)}
+.carte-art .prix{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.carte-art .nom{font-size:13px;font-weight:500;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carte-art .meta{font-size:12px;color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vide{margin:8px 16px;padding:24px 20px;border-radius:14px;border:1.5px dashed var(--line-2);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--ink2)}
+.vide b{color:var(--ink);font-size:16px}
+.vide p{margin:0;font-size:14px;line-height:1.5;max-width:34ch}
+.btn{min-height:48px;padding:0 18px;border-radius:10px;border:0;font-size:16px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn-plein{background:var(--accent);color:var(--on-accent)}
+.btn-noir{background:var(--ink);color:var(--bg)}
+.btn-contour{background:transparent;border:1.5px solid var(--ink);color:var(--ink)}
+.btn-leger{background:var(--surface);color:var(--ink)}
+.btn-danger{background:var(--bad-soft);color:var(--bad)}
+.btn-petit{min-height:40px;font-size:14px;padding:0 14px}
+.btn[disabled]{opacity:.5;cursor:default}
+.plein{width:100%}
+.section{padding:0 16px;margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.section h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3)}
+.bloc{border:1px solid var(--line);border-radius:14px;background:var(--bg);overflow:hidden}
+.rangee{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--line)}
+.rangee:first-child{border-top:0}
+.rangee .fl{flex:1;min-width:0}
+.rangee .val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.point{width:9px;height:9px;border-radius:99px;flex-shrink:0}
+.note{font-size:13px;line-height:1.45;color:var(--ink3);margin:0}
+.encart{padding:12px 14px;border-radius:12px;background:var(--surface);display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--ink2)}
+.encart svg{flex-shrink:0;margin-top:1px}
+.encart b{color:var(--ink)}
+.encart.chaud{background:var(--warn-soft);color:var(--warn)} .encart.chaud b{color:var(--warn)}
+.encart.violet{background:var(--violet-soft);color:var(--violet)} .encart.violet b{color:var(--violet)}
+.encart.vert{background:var(--accent-soft);color:var(--accent-ink)} .encart.vert b{color:var(--accent-ink)}
+/* barre d'onglets */
+.onglets{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(520px,100%);box-sizing:border-box;padding:8px 6px calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));z-index:20}
+.onglet{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:52px;border:0;background:none;color:var(--ink3);font-size:11px;font-weight:600;padding:0}
+.onglet[aria-current="page"]{color:var(--accent);font-weight:700}
+.onglet .plus{width:40px;height:40px;border-radius:99px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center}
+.onglet.central{color:var(--ink);font-weight:700;gap:3px}
+.badge{position:absolute;top:0;left:50%;margin-left:6px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:var(--warn-strong);color:var(--on-warn);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+/* fiches plein écran */
+.feuille{position:fixed;inset:0;z-index:40;background:var(--voile);display:flex;justify-content:center;align-items:flex-end}
+.panneau{width:min(520px,100%);height:100%;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+@media (min-width:560px){.panneau{height:94%;border-radius:18px 18px 0 0}}
+.panneau-tete{min-height:56px;padding:0 8px;padding-top:env(safe-area-inset-top,0px);display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--line);flex-shrink:0}
+.panneau-tete .t{font-size:17px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icone-btn{width:44px;height:44px;border:0;background:none;display:flex;align-items:center;justify-content:center;color:var(--ink);border-radius:99px;flex-shrink:0}
+.panneau-corps{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.panneau-pied{padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;gap:10px;flex-shrink:0}
+.panneau-pied .btn{flex:1}
+.agent-tag{padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.a-achat{background:var(--bleu-soft);color:var(--bleu)} .a-annonce{background:var(--accent-soft);color:var(--accent-ink)}
+.a-vente{background:var(--warn-soft);color:var(--warn)} .a-compta{background:var(--good-soft);color:var(--good)}
+.a-relance{background:var(--violet-soft);color:var(--violet)} .a-analyste{background:var(--surface-2);color:var(--ink)}
+.choix{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);text-align:left;width:100%}
+.choix .ic{width:48px;height:48px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.choix .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.choix .tx b{font-size:16px}
+.choix .tx span{font-size:13px;line-height:1.35;color:var(--ink3)}
+.choix .tx em{font-style:normal;font-size:12px;font-weight:700}
+.depot{margin:18px 16px 0;padding:20px 16px;border:1.5px dashed var(--line-2);border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.depot b{font-size:15px}
+.depot span{font-size:13px;line-height:1.4;color:var(--ink3);max-width:34ch}
+.capture{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.capture:first-child{border-top:0}
+.capture img{width:44px;height:60px;object-fit:cover;object-position:top;border-radius:6px;border:1px solid var(--line);flex-shrink:0}
+.capture .fl{flex:1;min-width:0;font-size:14px}
+.capture .fl small{display:block;color:var(--ink3);font-size:12px}
+.roue{width:18px;height:18px;border:2.5px solid var(--line-2);border-top-color:var(--accent);border-radius:50%;animation:tourne .8s linear infinite;flex-shrink:0}
+@keyframes tourne{to{transform:rotate(360deg)}}
+.proposition{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.proposition.fait{opacity:.55}
+.prop-tete{padding:12px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:var(--surface)}
+.prop-tete .rq{flex-basis:100%;font-size:13px;color:var(--ink2);line-height:1.4}
+.prop-corps{padding:12px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.prop-corps .large{grid-column:1 / -1}
+.champ{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--ink3);min-width:0}
+.champ input,.champ select,.champ textarea{min-height:44px;width:100%;box-sizing:border-box;border:1px solid var(--line-2);border-radius:10px;padding:0 12px;background:var(--bg);color:var(--ink);font-size:16px;font-weight:500}
+.champ.douteux input{border-color:var(--warn-strong);background:var(--warn-soft)}
+.champ.douteux{color:var(--warn)}
+.prop-pied{padding:0 14px 14px;display:flex;gap:10px}
+.prop-pied .btn{flex:1}
+.fait-ok{padding:12px 14px;font-size:14px;font-weight:700;color:var(--good);display:flex;gap:8px;align-items:center}
+/* fiche article */
+.grande-photo{position:relative;height:300px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.grande-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
+.grande-photo svg.silh{width:120px;height:120px}
+.grande-photo .retour{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:12px;width:44px;height:44px;border-radius:99px;border:0;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center}
+.grande-photo .pastille{top:auto;bottom:12px;left:12px;font-size:12px;padding:5px 10px}
+.argent{margin:0 16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.argent div{padding:12px;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--line)}
+.argent div:first-child{border-left:0}
+.argent span{font-size:12px;color:var(--ink3)}
+.argent b{font-size:17px;font-variant-numeric:tabular-nums}
+.argent .bon{background:var(--good-soft)} .argent .bon span,.argent .bon b{color:var(--good)}
+.argent .mauvais{background:var(--bad-soft)} .argent .mauvais span,.argent .mauvais b{color:var(--bad)}
+.parcours{padding:0 16px;display:flex;flex-direction:column}
+.etape{display:flex;gap:12px}
+.etape .rail{display:flex;flex-direction:column;align-items:center}
+.etape .rond{width:22px;height:22px;box-sizing:border-box;border-radius:99px;display:flex;align-items:center;justify-content:center;border:2px solid var(--line-2);background:var(--bg);color:var(--on-accent)}
+.etape.fait .rond{background:var(--accent);border-color:var(--accent)}
+.etape.ici .rond{border-color:var(--warn-strong)}
+.etape .trait{width:2px;flex:1;min-height:18px;background:var(--line-2)}
+.etape.fait .trait{background:var(--accent)}
+.etape .tx{padding:1px 0 14px;display:flex;flex-direction:column;gap:1px}
+.etape .tx b{font-size:14px}
+.etape.pas-fait .tx b{color:var(--ink3);font-weight:600}
+.etape.ici .tx b{color:var(--warn)}
+.etape .tx span{font-size:12px;color:var(--ink3)}
+.actions{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.actions .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.confirm{padding:12px 14px;border-radius:12px;background:var(--bad-soft);color:var(--bad);display:flex;flex-direction:column;gap:10px;font-size:14px;font-weight:600}
+/* colis */
+.colis{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+.colis-delai{padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;background:var(--warn-soft);color:var(--warn)}
+.colis-delai.retard{background:var(--bad-soft);color:var(--bad)}
+.colis-delai.calme{background:var(--surface);color:var(--ink2)}
+.colis-delai .r{margin-left:auto;font-size:13px}
+.colis-art{padding:14px;display:flex;gap:12px;align-items:center}
+.vignette{width:60px;height:72px;flex-shrink:0;border-radius:8px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.vignette img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.vignette svg{width:36px;height:36px}
+.coche{min-height:44px;display:flex;align-items:center;gap:12px;font-size:15px;border-top:1px solid var(--line);margin:0 14px}
+.coche input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+.coche input:checked + span{color:var(--ink3);text-decoration:line-through}
+/* compta et analyse */
+.bascule{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:3px;border-radius:10px;background:var(--surface);gap:3px}
+.bascule button{min-height:38px;border:0;border-radius:8px;background:transparent;font-size:14px;font-weight:600;color:var(--ink2)}
+.bascule button[aria-pressed="true"]{background:var(--bg);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.nav-periode{display:flex;align-items:center;gap:6px}
+.nav-periode .lab{flex:1;text-align:center;font-weight:700;font-size:15px}
+.nav-periode button{width:40px;height:40px;border:0;border-radius:99px;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.heros{padding:14px 16px 4px;display:flex;flex-direction:column;gap:2px}
+.heros .lab{font-size:14px;font-weight:600;color:var(--ink3)}
+.heros .big{font-family:var(--f-titre);font-size:46px;font-weight:700;letter-spacing:-1px;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--good)}
+.heros .big.neg{color:var(--bad)}
+.heros .big.nul{color:var(--ink)}
+.heros .det{font-size:14px;color:var(--ink2)}
+.cases{padding:0 16px;margin-top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.case{padding:10px 12px;border-radius:10px;background:var(--surface);display:flex;flex-direction:column;gap:2px;min-width:0}
+.case span{font-size:12px;color:var(--ink3)}
+.case b{font-size:16px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.graphe{display:grid;gap:8px;align-items:end;height:130px;padding:0 4px;border-bottom:1px solid var(--line-2)}
+.barre{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;min-width:0}
+.barre i{display:block;width:100%;border-radius:5px 5px 0 0;background:var(--surface-2)}
+.barre.plein i{background:var(--accent)}
+.barre.actif i{background:var(--accent)}
+.barre.actif small{color:var(--good);font-weight:700}
+.barre small{font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.axe{display:grid;gap:8px;padding:0 4px;text-align:center;font-size:11px;color:var(--ink3)}
+.axe .actif{color:var(--ink);font-weight:700}
+.objectif{margin:4px 16px 0;padding:18px;border-radius:16px;background:var(--accent-soft);color:var(--accent-ink);display:flex;flex-direction:column;gap:10px}
+.objectif .t{font-family:var(--f-titre);font-size:21px;font-weight:700;letter-spacing:-.3px;color:var(--ink);text-wrap:balance}
+.jauge{height:10px;border-radius:99px;background:var(--bg);overflow:hidden}
+.jauge i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.objectif .ch{display:flex;justify-content:space-between;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.statut{align-self:flex-start;padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.statut.bon{background:var(--good-soft);color:var(--good)} .statut.moyen{background:var(--warn-soft);color:var(--warn)}
+.statut.mauvais{background:var(--bad-soft);color:var(--bad)} .statut.neutre{background:var(--bg);color:var(--ink2)}
+.indic{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.indic div{padding:12px;border-radius:12px;border:1px solid var(--line);display:flex;flex-direction:column;gap:3px;min-width:0}
+.indic span{font-size:12px;color:var(--ink3)}
+.indic b{font-size:18px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan{display:flex;flex-direction:column;gap:8px}
+.plan button,.plan div{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);text-align:left;width:100%;box-sizing:border-box}
+.plan .num{width:28px;height:28px;flex-shrink:0;border-radius:99px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.plan .tx{flex:1;min-width:0;font-size:14px;line-height:1.4}
+.plan .tx b{display:block;font-size:15px}
+.conseil{padding:12px 14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.conseil:first-child{border-top:0}
+.conseil b{font-size:15px}
+.conseil span{font-size:14px;line-height:1.45;color:var(--ink2)}
+.agent{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;align-items:flex-start}
+.agent .ic{width:40px;height:40px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.agent .tx{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.agent .tx b{font-size:15px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.agent .tx span{font-size:13px;line-height:1.4;color:var(--ink2)}
+.agent .genre{font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--surface);color:var(--ink2)}
+/* formateur */
+.coeur{position:absolute;bottom:8px;right:8px;padding:3px 8px;border-radius:99px;background:var(--bg);color:var(--ink);font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums}
+.coeur svg{width:12px;height:12px}
+.segments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:3px;border-radius:10px;background:var(--surface);gap:3px}
+.segments button{min-height:38px;border:0;border-radius:8px;background:transparent;font-size:14px;font-weight:600;color:var(--ink2)}
+.segments button[aria-pressed="true"]{background:var(--bg);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.synchro{margin:0 16px;padding:14px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.synchro .l{display:flex;align-items:center;gap:10px}
+.synchro .l span{flex:1;min-width:0;font-size:14px;line-height:1.4;color:var(--ink2)}
+.synchro .l b{color:var(--ink)}
+.consigne{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+.consigne-tete{display:flex;gap:12px;padding:12px;align-items:flex-start;border:0;background:none;width:100%;text-align:left}
+.consigne-tete .vignette{width:54px;height:66px}
+.consigne-tete .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.consigne-tete .tx b{font-size:15px}
+.consigne-tete .tx span{font-size:13px;line-height:1.45;color:var(--ink2)}
+.consigne-tete .tx em{font-style:normal;font-size:12px;color:var(--ink3)}
+.etiq{align-self:flex-start;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.2px}
+.e-taille{background:var(--bad-soft);color:var(--bad)} .e-reposter{background:var(--violet-soft);color:var(--violet)}
+.e-baisser{background:var(--warn-soft);color:var(--warn)} .e-retirer{background:var(--surface-2);color:var(--ink2)}
+.e-hashtags{background:var(--bleu-soft);color:var(--bleu)} .e-garder{background:var(--good-soft);color:var(--good)}
+.consigne-pied{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 12px 12px}
+.consigne-pied .btn{min-height:42px;font-size:14px}
+.regle{padding:12px 14px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.regle:first-child{border-top:0}
+.regle .q{flex-shrink:0;min-width:74px;font-size:13px;font-weight:700;color:var(--accent-ink);font-variant-numeric:tabular-nums}
+.regle .r{font-size:14px;line-height:1.45;color:var(--ink2)}
+.regle .r b{color:var(--ink)}
+.revue{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.revue .bloc-texte{padding:12px 14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.revue .bloc-texte:first-child{border-top:0}
+.revue .bloc-texte small{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink3)}
+.revue .bloc-texte p{margin:0;font-size:14px;line-height:1.5;white-space:pre-line;color:var(--ink)}
+.revue .bloc-texte .btn{align-self:flex-start;min-height:36px;font-size:13px;padding:0 12px}
+.desc{padding:12px 14px;border-radius:12px;background:var(--surface);font-size:14px;line-height:1.5;white-space:pre-line;color:var(--ink2)}
+.lien-vinted{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--accent-ink);text-decoration:none}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:calc(100% - 32px);padding:12px 16px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:600;z-index:60;box-shadow:0 6px 24px rgba(0,0,0,.2)}
+/* verrou et installation */
+body{-webkit-tap-highlight-color:transparent}
+.verrou{min-height:100vh;min-height:100dvh;box-sizing:border-box;padding:calc(48px + env(safe-area-inset-top,0px)) 24px calc(32px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;max-width:420px;margin:0 auto}
+.verrou .marque{width:64px;height:64px;border-radius:16px;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center}
+.verrou form{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.verrou input{min-height:54px;border:1.5px solid var(--line-2);border-radius:12px;padding:0 16px;background:var(--bg);color:var(--ink);font-size:24px;font-weight:700;letter-spacing:6px;text-align:center;font-variant-numeric:tabular-nums}
+.verrou input::placeholder{font-size:16px;font-weight:500;letter-spacing:0;color:var(--ink3)}
+.verrou input:focus{border-color:var(--accent);outline:none}
+.verrou .erreur{margin:0;padding:10px 12px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:14px;font-weight:600}
+.verrou .installer{margin:12px 0 0}
+.installer{margin:0 16px 4px;padding:14px;border-radius:14px;background:var(--accent-soft);color:var(--accent-ink);display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.45}
+.installer b{color:var(--ink)}
+.installer ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.installer .ic-partager{display:inline-flex;vertical-align:-4px}
+.capture .ic-cap{width:44px;height:60px;border-radius:6px;background:var(--surface);color:var(--ink3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <main id="vue" aria-live="polite"></main>
+</div>
+
+<nav class="onglets" id="onglets" aria-label="Navigation"></nav>
+
+<div class="feuille" id="feuille" hidden>
+  <section class="panneau" id="panneau" role="dialog" aria-modal="true" aria-label="Fiche"></section>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="fichiers" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ───────── petits outils ───────── */
+  var $ = function (s) { return document.querySelector(s); };
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  var FMT = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
+  var FMT0 = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  function eur(n) { return FMT.format(Number(n) || 0); }
+  function eurC(n) { var v = Number(n) || 0; return Math.abs(v) >= 100 || Math.round(v) === v ? FMT0.format(Math.round(v)) : FMT.format(v); }
+  function signe(n) { var v = Number(n) || 0; return (v > 0 ? "+" : "") + eur(v); }
+  function signeC(n) { var v = Number(n) || 0; return (v > 0 ? "+" : "") + eurC(v); }
+  function num(v) {
+    if (v === null || v === undefined || v === "") return null;
+    var x = parseFloat(String(v).replace(/\s/g, "").replace(",", ".").replace(/[^\d.\-]/g, ""));
+    return isFinite(x) ? Math.round(x * 100) / 100 : null;
+  }
+  function uid() { return "a" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function propre(o) { return JSON.parse(JSON.stringify(o)); }
+
+  /* ───────── dates, toujours en AAAA-MM-JJ ───────── */
+  var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  var MOISC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+  var JOURS = ["dim.","lun.","mar.","mer.","jeu.","ven.","sam."];
+  var JOURSL = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+  function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function auj() { return iso(new Date()); }
+  function valide(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
+  function D(s) { var p = String(s).slice(0, 10).split("-").map(Number); return new Date(p[0], (p[1] || 1) - 1, p[2] || 1, 12); }
+  function ecart(a, b) { return Math.round((D(b) - D(a)) / 864e5); }
+  function plusJours(s, n) { var d = D(s); d.setDate(d.getDate() + n); return iso(d); }
+  function plusOuvres(s, n) { var d = D(s), k = 0; while (k < n) { d.setDate(d.getDate() + 1); var w = d.getDay(); if (w !== 0 && w !== 6) k++; } return iso(d); }
+  function lundi(s) { var d = D(s); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return iso(d); }
+  function court(s) { if (!valide(s)) return ""; var d = D(s); return d.getDate() + " " + MOISC[d.getMonth()]; }
+  function avecJour(s) { if (!valide(s)) return ""; var d = D(s); return JOURS[d.getDay()] + " " + d.getDate() + " " + MOISC[d.getMonth()]; }
+  function long(s) { if (!valide(s)) return ""; var d = D(s); return d.getDate() + " " + MOIS[d.getMonth()] + " " + d.getFullYear(); }
+  function periode(type, dec) {
+    var t = auj();
+    if (type === "semaine") {
+      var deb = plusJours(lundi(t), 7 * dec);
+      return { debut: deb, fin: plusJours(deb, 6), court: court(deb),
+        label: dec === 0 ? "Cette semaine" : dec === -1 ? "Semaine dernière" : "Semaine du " + court(deb) };
+    }
+    var d = D(t); d.setDate(1); d.setMonth(d.getMonth() + dec);
+    var f = new Date(d.getFullYear(), d.getMonth() + 1, 0, 12);
+    return { debut: iso(d), fin: iso(f), court: MOISC[d.getMonth()], label: MOIS[d.getMonth()] + " " + d.getFullYear() };
+  }
+  function dans(s, p) { return valide(s) && s >= p.debut && s <= p.fin; }
+
+  /* ───────── icônes, traits simples ───────── */
+  var P = {
+    grille: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    colis: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    compta: '<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>',
+    analyse: '<path d="M4 16l5-5 4 4 7-7"/><path d="M15 8h5v5"/>',
+    puce: '<rect x="6" y="6" width="12" height="12" rx="2.5"/><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"/>',
+    loupe: '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
+    croix: '<path d="M6 6l12 12M18 6 6 18"/>',
+    retour: '<path d="M15 5l-7 7 7 7"/>',
+    suite: '<path d="m9 5 7 7-7 7"/>',
+    ok: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    crayon: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+    recu: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+    etiquette: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+    sac: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="m9.5 14 2 2 3.5-3.5"/>',
+    horloge: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    images: '<rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8"/>',
+    calc: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>',
+    cible: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+    synchro: '<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M4 4v4h4M20 20v-4h-4"/>',
+    info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
+    poubelle: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4.5h6V7"/>',
+    formateur: '<path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.5c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8V11"/><path d="M21.5 9v5"/>',
+    coeur: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    externe: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+    copier: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+    main: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>'
+  };
+  function ico(n, t, e) { return '<svg width="' + (t || 22) + '" height="' + (t || 22) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (e || 1.9) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + P[n] + "</svg>"; }
+  var SIL = {
+    haut: '<path d="M8 4h8l4 3-2 4-2-1v10H8V10l-2 1-2-4z"/><path d="M10 4c.4 1 1.1 1.6 2 1.6S13.6 5 14 4"/>',
+    tee: '<path d="M8 4 4 6.5l1.8 3.3L8 9v11h8V9l2.2.8L20 6.5 16 4c-.6 1.4-2.2 2.3-4 2.3S8.6 5.4 8 4z"/>',
+    bas: '<path d="M8 3h8l1 18h-4l-1-10-1 10H7z"/><path d="M8 6h8"/>',
+    veste: '<path d="M9 3 5 6v15h5V9l2 3 2-3v12h5V6l-4-3-3 4z"/>',
+    chaussure: '<path d="M3 15c0-2 1-3 3-3l4-4 3 2c2 1 5 1.5 7 2.5V17H3z"/><path d="M3 17.5h17"/>',
+    autre: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>'
+  };
+  function silhouette(texte, classe) {
+    var t = norm(texte), k = "autre";
+    if (/(t shirt|tshirt|tee|debardeur|polo|top|chemise)/.test(t)) k = "tee";
+    else if (/(pull|sweat|hoodie|capuche|gilet|haut|maillot)/.test(t)) k = "haut";
+    else if (/(jean|pantalon|jogging|short|jupe|legging|bas)/.test(t)) k = "bas";
+    else if (/(veste|manteau|blouson|doudoune|parka|coupe vent)/.test(t)) k = "veste";
+    else if (/(basket|chaussure|sneaker|botte|sandale|mocassin)/.test(t)) k = "chaussure";
+    return '<svg class="' + (classe || "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + SIL[k] + "</svg>";
+  }
+  function teinte(id) { var h = 0, s = String(id); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return "t" + (h % 6 + 1); }
+  function norm(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, " ").trim(); }
+
+  /* ───────── état ───────── */
+  var S = { articles: new Map(), reglages: {}, analyse: null, pret: false, mode: "local", synchro: null, demande: null, demandeAnalyse: null, captures: [], jeton: "", version: "" };
+  var F = { onglet: "stock", filtre: "tout", recherche: "", periode: "semaine", decalage: 0, section: "consignes" };
+  var PROPS = [];            /* propositions des agents en attente de validation */
+  try { var o = localStorage.getItem("pilote.onglet"); if (o) F.onglet = o; } catch (x) {}
+  var h0 = (location.hash || "").replace("#", "");
+  if (["stock", "envois", "compta", "formateur", "agents"].indexOf(h0) >= 0) F.onglet = h0;
+  if (F.onglet === "analyse") F.onglet = "formateur";
+  if (["stock", "envois", "compta", "formateur", "agents"].indexOf(F.onglet) < 0) F.onglet = "stock";
+
+  var VENDUS = ["vendu", "envoye", "paye"];
+  function liste() { return Array.from(S.articles.values()); }
+  function estVendu(a) { return VENDUS.indexOf(a.statut) >= 0; }
+  function marge(a) { return (num(a.prixVente) || 0) - (num(a.cout) || 0); }
+  function joursEnLigne(a) { return valide(a.dateEnLigne) ? Math.max(0, ecart(a.dateEnLigne, auj())) : 0; }
+  function endormi(a) { return a.statut === "en_ligne" && joursEnLigne(a) >= 30; }
+
+  /* ───────── stockage : la base Pilote, plus une copie sur l'appareil pour s'ouvrir sans attendre ───────── */
+  var API = "https://ejwcowdrncmrjfwuhurs.supabase.co/functions/v1/pilote";
+  var PHOTOS = "https://ejwcowdrncmrjfwuhurs.supabase.co/storage/v1/object/public/pilote-photos/";
+  var CLE_JETON = "pilote.jeton", CLE_COPIE = "pilote.copie";
+  var DEMO = /[?&]demo\b/.test(location.search) && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var INSTALLEE = window.navigator.standalone === true || !!(window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  var VERROU = { mode: "chargement", erreur: "", envoi: false, cle: "" };
+  try { S.jeton = localStorage.getItem(CLE_JETON) || ""; } catch (x) {}
+  (function () {
+    /* le QR code d'installation porte une clé, qui ne sert qu'une fois : pour choisir le code */
+    var m = (location.hash || "").match(/installer=([a-f0-9]{16,64})/);
+    try {
+      if (m) { sessionStorage.setItem("pilote.cle", m[1]); history.replaceState(null, "", location.pathname + location.search); }
+      VERROU.cle = sessionStorage.getItem("pilote.cle") || "";
+    } catch (x) { if (m) VERROU.cle = m[1]; }
+  })();
+  window.addEventListener("hashchange", function () {
+    var m = (location.hash || "").match(/installer=([a-f0-9]{16,64})/);
+    if (!m) return;
+    VERROU.cle = m[1];
+    try { sessionStorage.setItem("pilote.cle", m[1]); history.replaceState(null, "", location.pathname + location.search); } catch (x) {}
+    if (!S.jeton) verifierEtat();
+  });
+
+  function appel(action, opts) {
+    opts = opts || {};
+    var h = Object.assign({}, opts.headers || {});
+    if (S.jeton) h["x-pilote-jeton"] = S.jeton;
+    return fetch(API + "?action=" + action + (opts.query || ""), { method: opts.method || "GET", headers: h, body: opts.body, cache: "no-store" })
+      .then(function (r) {
+        if (r.status === 401 && action !== "entrer") { oublierJeton(); throw { code: "verrou" }; }
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok) throw { code: "http", status: r.status, message: j && j.erreur };
+          return j;
+        });
+      }, function () { throw { code: "reseau" }; });
+  }
+  function appliquerDocs(docs) {
+    var arts = new Map(), caps = [];
+    S.reglages = {}; S.analyse = null; S.synchro = null; S.demande = null; S.demandeAnalyse = null;
+    (docs || []).forEach(function (d) {
+      var p = String(d.chemin).split("/"), v = Object.assign({}, d.donnees);
+      if (p[0] === "articles") { v.id = p[1]; arts.set(p[1], v); }
+      else if (p[0] === "captures") { v.id = p[1]; caps.push(v); }
+      else if (d.chemin === "reglages/general") S.reglages = v;
+      else if (d.chemin === "analyses/derniere") S.analyse = v;
+      else if (d.chemin === "analyses/demande") S.demandeAnalyse = v;
+      else if (d.chemin === "synchro/etat") S.synchro = v;
+      else if (d.chemin === "synchro/demande") S.demande = v;
+    });
+    S.articles = arts;
+    S.captures = caps.sort(function (x, y) { return String(x.envoyeeLe || "").localeCompare(String(y.envoyeeLe || "")); });
+  }
+  function chargerCopie() {
+    try {
+      var c = JSON.parse(localStorage.getItem(CLE_COPIE) || "null");
+      if (c && Array.isArray(c.docs)) { appliquerDocs(c.docs); S.version = c.version || ""; S.pret = true; }
+    } catch (x) {}
+  }
+  function garderCopie(docs, version) {
+    try { localStorage.setItem(CLE_COPIE, JSON.stringify({ docs: docs, version: version })); } catch (x) {}
+  }
+  /* Une écriture passée pendant un chargement rend sa réponse périmée : on la jette et on relit. */
+  var enChargement = null, encore = false, ecritures = 0;
+  function charger() {
+    if (DEMO || !S.jeton) return Promise.resolve();
+    if (enChargement) { encore = true; return enChargement; }
+    var depart = ecritures;
+    enChargement = appel("tout", { query: S.version ? "&si=" + encodeURIComponent(S.version) : "" }).then(function (j) {
+      if (depart !== ecritures) { encore = true; return; }
+      var avant = S.mode;
+      S.mode = "cloud";
+      if (!j.inchange) { appliquerDocs(j.docs); S.version = j.version; garderCopie(j.docs, j.version); S.pret = true; rendre(); }
+      else if (!S.pret || avant !== "cloud") { S.pret = true; rendre(); }
+    }).catch(function (e) {
+      if (e && e.code === "verrou") return;
+      if (S.mode !== "hors" || !S.pret) { S.mode = "hors"; S.pret = true; rendre(); }
+    }).then(function () {
+      enChargement = null;
+      if (encore) { encore = false; return charger(); }
+    });
+    return enChargement;
+  }
+  function ecrire(ops) {
+    if (DEMO) { toast("Mode démo : rien n'est enregistré."); return Promise.resolve(); }
+    ecritures++;
+    return appel("ecrire", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ops: ops }) })
+      .then(function (j) { ecritures++; charger(); return j; })
+      .catch(function (e) { ecritures++; if (!e || e.code !== "verrou") toast(erreurDb(e)); charger(); throw e; });
+  }
+  function enregistrer(a) {
+    a.majLe = new Date().toISOString();
+    var corps = propre(a);
+    S.articles.set(a.id, corps); rendre();
+    return ecrire([{ op: "set", chemin: "articles/" + a.id, donnees: corps }]);
+  }
+  function effacer(id) {
+    S.articles.delete(id);
+    return ecrire([{ op: "delete", chemin: "articles/" + id }]).catch(function () {});
+  }
+  function enregistrerReglages() {
+    return ecrire([{ op: "set", chemin: "reglages/general", donnees: propre(S.reglages) }]).catch(function () {});
+  }
+  function erreurDb(e) {
+    if (e && e.code === "reseau") return "Pas de réseau : rien n'est enregistré. Réessaie quand ça capte.";
+    if (e && e.status === 429) return "Trop d'essais. Réessaie dans quelques minutes.";
+    return (e && e.message) || "Pas enregistré. Réessaie dans un instant.";
+  }
+
+  /* ───────── le code qui ferme Pilote ───────── */
+  function oublierJeton() {
+    S.jeton = ""; S.version = ""; S.articles = new Map(); S.captures = []; S.pret = false;
+    try { localStorage.removeItem(CLE_JETON); localStorage.removeItem(CLE_COPIE); } catch (x) {}
+    verifierEtat();
+  }
+  function verifierEtat() {
+    VERROU.mode = "chargement"; rendre();
+    fetch(API + "?action=etat", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
+      VERROU.mode = j && j.codeDefini ? "entrer" : "definir"; rendre();
+    }).catch(function () { VERROU.mode = "reseau"; rendre(); });
+  }
+  function envoyerCode() {
+    var c = String(($("#code") || {}).value || "").trim(), c2 = String(($("#code2") || {}).value || "").trim();
+    if (!/^\d{6,12}$/.test(c)) { VERROU.erreur = "Le code fait de 6 à 12 chiffres."; rendre(); return; }
+    if (VERROU.mode === "definir" && c !== c2) { VERROU.erreur = "Les deux codes ne sont pas pareils. Recommence."; rendre(); return; }
+    VERROU.envoi = true; VERROU.erreur = ""; rendre();
+    appel("entrer", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ code: c, installation: VERROU.cle || null }) })
+      .then(function (j) {
+        S.jeton = j.jeton;
+        try { localStorage.setItem(CLE_JETON, j.jeton); sessionStorage.removeItem("pilote.cle"); } catch (x) {}
+        VERROU.cle = ""; VERROU.envoi = false; S.pret = false; S.mode = "local";
+        rendre(); charger();
+      }).catch(function (e) {
+        VERROU.envoi = false;
+        VERROU.erreur = e && e.code === "reseau" ? "Pas de réseau. Réessaie quand ça capte." : (e && e.message) || "Ça n'a pas marché. Réessaie.";
+        rendre();
+      });
+  }
+  function demarrer() {
+    if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(function () {});
+    setInterval(function () { if (document.visibilityState === "visible") charger(); }, 20000);
+    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") charger(); });
+    if (DEMO) {
+      fetch("demo.json", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
+        appliquerDocs(j.docs); S.mode = "demo"; S.pret = true; rendre();
+      }).catch(function () { S.pret = true; rendre(); });
+      return;
+    }
+    if (!S.jeton) { verifierEtat(); return; }
+    chargerCopie(); rendre(); charger();
+  }
+
+  /* ───────── chiffres ───────── */
+  function bilan(p) {
+    var r = { ventes: 0, achats: 0, marges: 0, nb: 0, recu: 0 };
+    liste().forEach(function (a) {
+      if (estVendu(a) && dans(a.dateVente, p)) { r.ventes += num(a.prixVente) || 0; r.marges += marge(a); r.nb++; }
+      if (dans(a.dateAchat, p)) r.achats += num(a.cout) || 0;
+      if (a.statut === "paye" && dans(a.datePaiement, p)) r.recu += num(a.prixVente) || 0;
+    });
+    return r;
+  }
+  function stats() {
+    var arts = liste(), t = auj();
+    var vendus = arts.filter(estVendu);
+    var enLigne = arts.filter(function (a) { return a.statut === "en_ligne"; });
+    var p28 = { debut: plusJours(t, -27), fin: t };
+    var vendus28 = vendus.filter(function (a) { return dans(a.dateVente, p28); });
+    var delais = vendus.filter(function (a) { return valide(a.dateEnLigne) && valide(a.dateVente); }).map(function (a) { return Math.max(0, ecart(a.dateEnLigne, a.dateVente)); });
+    var cats = {};
+    arts.forEach(function (a) {
+      var c = (a.categorie || "sans catégorie").toLowerCase();
+      cats[c] = cats[c] || { categorie: c, vendus: 0, marge: 0, enLigne: 0 };
+      if (estVendu(a)) { cats[c].vendus++; cats[c].marge += marge(a); }
+      if (a.statut === "en_ligne") cats[c].enLigne++;
+    });
+    var catsL = Object.keys(cats).map(function (k) { return cats[k]; }).sort(function (x, y) { return y.marge - x.marge; });
+    var semaines = [];
+    for (var i = -7; i <= 0; i++) { var pp = periode("semaine", i); semaines.push({ semaine: pp.debut, benefice: Math.round(bilan(pp).marges * 100) / 100 }); }
+    var o = S.reglages.objectif || {};
+    var depuis = valide(o.depuis) ? o.depuis : "2000-01-01";
+    var acquis = (num(o.depart) || 0) + vendus.filter(function (a) { return valide(a.dateVente) && a.dateVente >= depuis; }).reduce(function (s, a) { return s + marge(a); }, 0);
+    var enAttente = vendus.filter(function (a) { return a.statut !== "paye" && valide(a.dateVente) && a.dateVente >= depuis; }).reduce(function (s, a) { return s + (num(a.prixVente) || 0); }, 0);
+    var montant = num(o.montant);
+    var fin = valide(o.date) ? o.date : null;
+    var semRest = fin ? Math.max(1, Math.ceil(ecart(t, fin) / 7)) : null;
+    var restant = montant != null ? Math.max(0, montant - acquis) : null;
+    var rythme = vendus28.reduce(function (s, a) { return s + marge(a); }, 0) / 4;
+    var margeMoy = vendus.length ? vendus.reduce(function (s, a) { return s + marge(a); }, 0) / vendus.length : null;
+    return {
+      date: t,
+      nbEnLigne: enLigne.length,
+      nbEndormis: enLigne.filter(endormi).length,
+      nbPasEnLigne: arts.filter(function (a) { return a.statut === "stock"; }).length,
+      nbAEnvoyer: arts.filter(function (a) { return a.statut === "vendu"; }).length,
+      valeurStock: enLigne.reduce(function (s, a) { return s + (num(a.prix) || 0); }, 0),
+      nbVendusTotal: vendus.length,
+      nbVendus28j: vendus28.length,
+      delaiMoyenVente: delais.length ? Math.round(delais.reduce(function (s, x) { return s + x; }, 0) / delais.length) : null,
+      tauxVente28j: (vendus28.length + enLigne.length) ? Math.round(100 * vendus28.length / (vendus28.length + enLigne.length)) : null,
+      prixMoyenVente: vendus.length ? Math.round(100 * vendus.reduce(function (s, a) { return s + (num(a.prixVente) || 0); }, 0) / vendus.length) / 100 : null,
+      margeMoyenne: margeMoy != null ? Math.round(margeMoy * 100) / 100 : null,
+      rythmeHebdo4sem: Math.round(rythme * 100) / 100,
+      objectif: montant != null ? { montant: montant, date: fin, libelle: o.libelle || "", acquis: Math.round(acquis * 100) / 100, dontEnAttente: Math.round(enAttente * 100) / 100, restant: Math.round(restant * 100) / 100, semainesRestantes: semRest, besoinHebdo: semRest ? Math.round(100 * restant / semRest) / 100 : null } : null,
+      categories: catsL.slice(0, 6),
+      beneficeParSemaine: semaines
+    };
+  }
+
+  /* ───────── rendu général ───────── */
+  function rendre() {
+    var v = $("#vue");
+    if (!v) return;
+    var verrouille = !S.jeton && !DEMO;
+    $("#onglets").hidden = verrouille;
+    if (verrouille) { v.innerHTML = vueVerrou(); return; }
+    var html = F.onglet === "envois" ? vueEnvois() : F.onglet === "compta" ? vueCompta() : F.onglet === "formateur" ? vueFormateur() : F.onglet === "agents" ? vueAgents() : vueStock();
+    var foc = document.activeElement && document.activeElement.id === "recherche";
+    var pos = foc ? document.activeElement.selectionStart : 0;
+    v.innerHTML = html;
+    if (foc) { var r = $("#recherche"); if (r) { r.focus(); try { r.setSelectionRange(pos, pos); } catch (x) {} } }
+    rendreOnglets();
+    if (!$("#feuille").hidden && FICHE.rendre && FICHE.mode !== "form" && !FICHE.vendre) FICHE.rendre();
+  }
+  function rendreOnglets() {
+    var n = liste().filter(function (a) { return a.statut === "vendu"; }).length;
+    function o(id, ic, lab, extra) {
+      return '<button class="onglet" data-action="onglet" data-onglet="' + id + '"' + (F.onglet === id ? ' aria-current="page"' : "") + ">" + ico(ic, 24) + lab + (extra || "") + "</button>";
+    }
+    $("#onglets").innerHTML =
+      o("stock", "grille", "Stock") +
+      o("envois", "colis", "Envois", n ? '<span class="badge">' + n + "</span>" : "") +
+      '<button class="onglet central" data-action="ajouter"><span class="plus">' + ico("plus", 22, 2.2) + "</span>Ajouter</button>" +
+      o("compta", "compta", "Compta") +
+      o("formateur", "formateur", "Formateur", aFaireAujourdhui() ? '<span class="badge">' + aFaireAujourdhui() + "</span>" : "");
+  }
+  function syncHtml() {
+    var on = S.mode === "cloud";
+    return '<span class="etat-sync' + (on ? " on" : "") + '"><i></i>' + (on ? "enregistré" : S.mode === "hors" ? "hors connexion" : S.mode === "demo" ? "démo" : "connexion…") + "</span>";
+  }
+
+  var CINTRE = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9.6V8.1a1.9 1.9 0 1 0-1.9-1.9"/><path d="M12 9.6 3 16.4h18z"/></svg>';
+  var PARTAGER = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M7 10H5v11h14V10h-2"/></svg>';
+  function installerHtml() {
+    if (INSTALLEE || !IOS) return "";
+    return '<div class="installer"><b>Dernière étape : mets Pilote sur ton écran d\'accueil</b><ol>' +
+      '<li>Touche <span class="ic-partager">' + PARTAGER + "</span> <b>Partager</b> dans Safari. Tu ne le vois pas ? Touche d'abord <b>•••</b>.</li>" +
+      "<li>Descends et choisis <b>« Sur l'écran d'accueil »</b>.</li>" +
+      "<li>Touche <b>Ajouter</b>, puis ouvre Pilote depuis sa nouvelle icône.</li></ol></div>";
+  }
+  function vueVerrou() {
+    var def = VERROU.mode === "definir";
+    var h = '<div class="verrou"><span class="marque">' + CINTRE + "</span>";
+    if (VERROU.mode === "chargement") return h + '<h1 class="titre">Pilote</h1><p class="sous" style="display:flex;gap:10px;align-items:center"><span class="roue"></span>Ouverture…</p></div>';
+    if (VERROU.mode === "reseau") return h + '<h1 class="titre">Pas de réseau</h1><p class="sous">Pilote a besoin d\'internet pour s\'ouvrir.</p><button class="btn btn-plein plein" data-action="reessayer">Réessayer</button></div>';
+    if (def && !VERROU.cle) return h + '<h1 class="titre">Pilote n\'a pas encore de code</h1><p class="sous">Scanne le QR code d\'installation avec l\'appareil photo de ton iPhone : c\'est lui qui te laisse choisir ton code.</p></div>';
+    var dis = VERROU.envoi ? " disabled" : "";
+    h += '<h1 class="titre">' + (def ? "Choisis ton code" : "Entre ton code") + "</h1>" +
+      '<p class="sous">' + (def ? "6 chiffres ou plus. Il protège ton stock et ta compta : retiens-le bien, c'est la seule clé de Pilote." : "Le code que tu as choisi en installant Pilote.") + "</p>" +
+      '<form id="form-code">' +
+      '<input id="code" type="password" inputmode="numeric" pattern="[0-9]*" minlength="6" maxlength="12" autocomplete="' + (def ? "off" : "current-password") + '" aria-label="' + (def ? "Ton nouveau code" : "Ton code") + '" placeholder="' + (def ? "Ton code" : "") + '" required' + dis + ">" +
+      (def ? '<input id="code2" type="password" inputmode="numeric" pattern="[0-9]*" minlength="6" maxlength="12" autocomplete="off" aria-label="Le même code, encore une fois" placeholder="Encore une fois" required' + dis + ">" : "") +
+      (VERROU.erreur ? '<p class="erreur" role="alert">' + esc(VERROU.erreur) + "</p>" : "") +
+      '<button class="btn btn-plein plein" type="submit"' + dis + ">" + (VERROU.envoi ? "Vérification…" : def ? "Enregistrer mon code" : "Ouvrir Pilote") + "</button></form>" +
+      installerHtml() + "</div>";
+    return h;
+  }
+
+  /* ───────── onglet Stock ───────── */
+  function pastille(a) {
+    if (a.absentVinted && a.statut === "en_ligne") return '<span class="pastille chaud">À vérifier</span>';
+    if (a.statut === "vendu") return '<span class="pastille chaud">À envoyer</span>';
+    if (a.statut === "envoye") return '<span class="pastille gris">Envoyé</span>';
+    if (a.statut === "paye") return '<span class="pastille bon">Payé</span>';
+    if (a.statut === "retire") return '<span class="pastille gris">Retiré</span>';
+    if (a.statut === "stock") return '<span class="pastille gris">Pas en ligne</span>';
+    if (endormi(a)) return '<span class="pastille dort">Endormi · ' + joursEnLigne(a) + " j</span>";
+    return '<span class="pastille">En ligne · ' + joursEnLigne(a) + " j</span>";
+  }
+  function metaCarte(a) {
+    if (a.statut === "vendu") return valide(a.dateLimite) ? "vendu · avant le " + court(a.dateLimite) : "vendu";
+    if (a.statut === "envoye") return "argent en attente";
+    return [a.taille, a.etat].filter(Boolean).join(" · ") || a.marque || "";
+  }
+  function prixCarte(a) {
+    if (estVendu(a)) return eur(a.prixVente);
+    return a.prix != null ? eur(a.prix) : "Prix à fixer";
+  }
+  function photoHtml(a, classe) {
+    return a.photo ? '<img src="' + PHOTOS + esc(a.photo) + '" alt="" loading="lazy">' : silhouette((a.categorie || "") + " " + (a.titre || ""), classe);
+  }
+  function coeurHtml(a) {
+    return a.favoris != null && a.statut === "en_ligne" ? '<span class="coeur">' + ico("coeur", 12, 2.2) + (num(a.favoris) || 0) + "</span>" : "";
+  }
+  function carte(a) {
+    return '<button class="carte-art" data-action="ouvrir" data-id="' + esc(a.id) + '">' +
+      '<span class="photo ' + teinte(a.id) + '">' + photoHtml(a) + pastille(a) + coeurHtml(a) + "</span>" +
+      '<span class="prix">' + esc(prixCarte(a)) + "</span>" +
+      '<span class="nom">' + esc(a.titre || "Sans titre") + "</span>" +
+      '<span class="meta">' + esc(metaCarte(a)) + "</span></button>";
+  }
+  var ORDRE = { vendu: 0, en_ligne: 1, stock: 2, envoye: 3, paye: 4, retire: 5 };
+  function filtrer() {
+    var q = norm(F.recherche);
+    return liste().filter(function (a) {
+      if (q && norm((a.titre || "") + " " + (a.marque || "") + " " + (a.categorie || "")).indexOf(q) < 0) return false;
+      if (F.filtre === "en_ligne") return a.statut === "en_ligne";
+      if (F.filtre === "endormis") return endormi(a);
+      if (F.filtre === "stock") return a.statut === "stock";
+      if (F.filtre === "vendus") return estVendu(a);
+      if (F.filtre === "verifier") return a.absentVinted && a.statut === "en_ligne";
+      return a.statut !== "paye" && a.statut !== "retire";
+    }).sort(function (x, y) {
+      var d = (ORDRE[x.statut] || 9) - (ORDRE[y.statut] || 9);
+      if (d) return d;
+      return String(y.dateEnLigne || y.dateVente || y.creeLe || "").localeCompare(String(x.dateEnLigne || x.dateVente || x.creeLe || ""));
+    });
+  }
+  function vueStock() {
+    var arts = liste();
+    var n = { tout: 0, en_ligne: 0, endormis: 0, stock: 0, vendus: 0, verifier: 0 };
+    arts.forEach(function (a) {
+      if (a.statut !== "paye" && a.statut !== "retire") n.tout++;
+      if (a.statut === "en_ligne") n.en_ligne++;
+      if (endormi(a)) n.endormis++;
+      if (a.statut === "stock") n.stock++;
+      if (estVendu(a)) n.vendus++;
+      if (a.absentVinted && a.statut === "en_ligne") n.verifier++;
+    });
+    var aEnv = arts.filter(function (a) { return a.statut === "vendu"; }).length;
+    var mois = bilan(periode("mois", 0));
+    var nomMois = MOIS[new Date().getMonth()];
+    function puce(id, lab) { return '<button class="puce" data-action="filtre" data-filtre="' + id + '" aria-pressed="' + (F.filtre === id) + '">' + lab + " · " + n[id] + "</button>"; }
+    var h = '<header class="entete"><div class="ligne"><div style="display:flex;align-items:baseline;gap:10px"><span class="nom-app">Pilote</span>' + syncHtml() + "</div>" +
+      '<div style="display:flex;gap:8px"><button class="bouton-rond" data-action="synchro" aria-label="Actualiser mes articles depuis Vinted">' + ico("synchro", 20) + "</button>" +
+      '<button class="bouton-rond" data-action="onglet" data-onglet="agents" aria-label="Tes agents">' + ico("puce", 22) + "</button></div></div>" +
+      '<label class="recherche">' + ico("loupe", 18) + '<input id="recherche" type="search" placeholder="Rechercher dans mon stock" aria-label="Rechercher dans mon stock" value="' + esc(F.recherche) + '"></label></header>' + installerHtml() +
+      '<div class="tuiles"><div class="tuile"><b>' + n.en_ligne + "</b><span>en ligne</span></div>" +
+      '<div class="tuile' + (aEnv ? " chaud" : "") + '"><b>' + aEnv + "</b><span>à envoyer</span></div>" +
+      '<div class="tuile' + (mois.marges > 0 ? " bon" : "") + '"><b>' + esc(signeC(mois.marges)) + "</b><span>en " + nomMois + "</span></div></div>" + bandeauCaptures() +
+      '<div class="puces" role="group" aria-label="Filtrer">' + (n.verifier ? puce("verifier", "À vérifier") : "") + puce("tout", "Tout") + puce("en_ligne", "En ligne") + puce("endormis", "Endormis") + puce("stock", "Pas en ligne") + puce("vendus", "Vendus") + "</div>";
+    return h + '<div id="zone-grille">' + grilleHtml() + "</div>";
+  }
+  function grilleHtml() {
+    if (!S.pret) return '<div class="vide"><span class="roue"></span><b>Ton stock arrive</b><p>Pilote charge tes articles.</p></div>';
+    if (!S.articles.size) {
+      return '<div class="vide">' + ico("images", 28) + "<b>Ton stock est vide</b><p>Fais une capture de ton dressing Vinted et envoie-la : l'agent ajoute tous tes articles d'un coup, à 0 € d'achat.</p>" +
+        '<button class="btn btn-plein" data-action="ajouter">Ajouter mes articles</button></div>';
+    }
+    var l = filtrer();
+    if (!l.length) return '<div class="vide"><b>Rien ici</b><p>Aucun article ne correspond à ta recherche ou à ce filtre.</p></div>';
+    return '<div class="grille">' + l.map(carte).join("") + "</div>";
+  }
+
+  /* ───────── onglet Envois ───────── */
+  function vueEnvois() {
+    var arts = liste();
+    var aEnv = arts.filter(function (a) { return a.statut === "vendu"; }).sort(function (x, y) { return String(x.dateLimite || "9").localeCompare(String(y.dateLimite || "9")); });
+    var att = arts.filter(function (a) { return a.statut === "envoye"; });
+    var h = '<header class="entete"><h1 class="titre">À envoyer</h1><p class="sous">' + (aEnv.length ? aEnv.length + " colis · le plus urgent en haut" : "Aucun colis en attente") + "</p></header>";
+    h += '<div style="padding:0 16px;display:flex;flex-direction:column;gap:14px">';
+    if (!aEnv.length) h += '<div class="vide" style="margin:0"><b>Aucun colis à envoyer</b><p>Quand tu vends, envoie la capture de la vente : l\'Agent Vente crée le colis ici avec sa date limite.</p></div>';
+    aEnv.forEach(function (a) {
+      var reste = valide(a.dateLimite) ? ecart(auj(), a.dateLimite) : null;
+      var cls = reste == null ? "calme" : reste < 0 ? "retard" : reste > 3 ? "calme" : "";
+      var txt = reste == null ? "Date limite inconnue" : "Avant " + JOURSL[D(a.dateLimite).getDay()] + " " + court(a.dateLimite);
+      var r = reste == null ? "" : reste < 0 ? "en retard de " + (-reste) + " j" : reste === 0 ? "aujourd'hui" : reste === 1 ? "reste 1 jour" : "reste " + reste + " jours";
+      var c = a.coches || [];
+      function coche(i, lab) { return '<label class="coche"><input type="checkbox" data-action="coche" data-id="' + esc(a.id) + '" data-i="' + i + '"' + (c[i] ? " checked" : "") + "><span>" + lab + "</span></label>"; }
+      h += '<article class="colis"><div class="colis-delai ' + cls + '">' + ico("horloge", 18, 2) + "<span>" + esc(txt) + '</span><span class="r">' + esc(r) + "</span></div>" +
+        '<button class="colis-art" data-action="ouvrir" data-id="' + esc(a.id) + '" style="border:0;background:none;width:100%;text-align:left">' +
+        '<span class="vignette ' + teinte(a.id) + '">' + photoHtml(a) + "</span>" +
+        '<span style="display:flex;flex-direction:column;gap:3px;min-width:0"><b style="font-size:16px">' + esc(a.titre || "Sans titre") + "</b>" +
+        '<span style="font-size:13px;color:var(--ink3)">vendu ' + esc(eur(a.prixVente)) + (a.transporteur ? " · " + esc(a.transporteur) : "") + "</span>" +
+        '<span style="font-size:13px;color:var(--ink3)">bordereau dans l\'appli Vinted</span></span></button>' +
+        coche(0, "Plier et emballer") + coche(1, "Coller ou montrer le bordereau") + coche(2, "Déposer au point relais") +
+        '<div style="padding:10px 14px 14px"><button class="btn btn-plein plein" data-action="deposer" data-id="' + esc(a.id) + '">Colis déposé</button></div></article>';
+    });
+    h += "</div>";
+    h += '<section class="section"><h2>Envoyés, argent en attente</h2>';
+    if (!att.length) h += '<div class="vide" style="margin:0"><p>Rien pour l\'instant. Un colis déposé reste ici jusqu\'à ce que l\'argent tombe.</p></div>';
+    else h += '<div class="bloc">' + att.map(function (a) {
+      return '<div class="rangee"><span class="fl"><b style="display:block;font-size:15px">' + esc(a.titre || "Sans titre") + '</b><span style="font-size:12px;color:var(--ink3)">déposé le ' + esc(court(a.dateEnvoi)) + " · " + esc(eur(a.prixVente)) + "</span></span>" +
+        '<button class="btn btn-leger btn-petit" data-action="recu" data-id="' + esc(a.id) + '">Argent reçu</button></div>';
+    }).join("") + "</div>";
+    h += '<div class="encart">' + ico("puce", 18) + "<span><b>Agent Vente</b> : la date limite vient de ta capture de vente. Sans date, je compte 5 jours ouvrés, la règle habituelle de Vinted.</span></div></section>";
+    return h;
+  }
+
+  /* ───────── onglet Compta ───────── */
+  function vueCompta() {
+    var type = F.periode, p = periode(type, F.decalage), b = bilan(p);
+    var h = '<header class="entete"><h1 class="titre">Ma compta</h1>' +
+      '<div class="bascule" role="group" aria-label="Période"><button data-action="periode" data-p="semaine" aria-pressed="' + (type === "semaine") + '">Semaine</button><button data-action="periode" data-p="mois" aria-pressed="' + (type === "mois") + '">Mois</button></div>' +
+      '<div class="nav-periode"><button data-action="decaler" data-d="-1" aria-label="Période précédente">' + ico("retour", 18, 2.2) + '</button><span class="lab">' + esc(p.label) + '</span><button data-action="decaler" data-d="1" aria-label="Période suivante"' + (F.decalage >= 0 ? " disabled" : "") + ">" + ico("suite", 18, 2.2) + "</button></div></header>";
+    var cl = b.marges > 0 ? "" : b.marges < 0 ? " neg" : " nul";
+    h += '<div class="heros"><span class="lab">Bénéfice net</span><span class="big' + cl + '">' + esc(signe(b.marges)) + '</span><span class="det">' +
+      (b.nb ? b.nb + " article" + (b.nb > 1 ? "s" : "") + " vendu" + (b.nb > 1 ? "s" : "") : "Aucune vente") + (b.achats ? ", " + esc(eur(b.achats)) + " d'achats" : ", aucun achat") + "</span></div>";
+    h += '<div class="cases"><div class="case"><span>Ventes</span><b>' + esc(eur(b.ventes)) + '</b></div><div class="case"><span>Achats</span><b>' + esc(eur(b.achats)) + '</b></div><div class="case"><span>Reçu</span><b>' + esc(eur(b.recu)) + "</b></div></div>";
+    var n = type === "semaine" ? 8 : 6, serie = [];
+    for (var i = n - 1; i >= 0; i--) { var pp = periode(type, F.decalage - i); serie.push({ p: pp, v: bilan(pp).marges, actif: i === 0 }); }
+    var max = Math.max.apply(null, serie.map(function (s) { return Math.max(0, s.v); }).concat([0]));
+    var cols = "grid-template-columns:repeat(" + n + ",minmax(0,1fr))";
+    h += '<section class="section"><h2>' + (type === "semaine" ? "Semaine par semaine" : "Mois par mois") + '</h2><div class="graphe" style="' + cols + '">' +
+      serie.map(function (s) {
+        var hpx = max > 0 && s.v > 0 ? Math.max(6, Math.round(96 * s.v / max)) : 4;
+        var lab = s.v ? (s.v > 0 ? "+" : "") + FMT0.format(Math.round(s.v)) : "";
+        return '<div class="barre' + (s.actif ? " actif" : s.v > 0 ? " plein" : "") + '"><small>' + esc(lab) + '</small><i style="height:' + hpx + 'px"></i></div>';
+      }).join("") + '</div><div class="axe" style="' + cols + '">' +
+      serie.map(function (s) { return '<span class="' + (s.actif ? "actif" : "") + '">' + esc(s.p.court) + "</span>"; }).join("") + "</div></section>";
+    var arts = liste();
+    var attente = arts.filter(function (a) { return a.statut === "vendu" || a.statut === "envoye"; }).reduce(function (s, a) { return s + (num(a.prixVente) || 0); }, 0);
+    var stock = arts.filter(function (a) { return a.statut === "en_ligne"; });
+    var pasLigne = arts.filter(function (a) { return a.statut === "stock"; });
+    var coutStock = arts.filter(function (a) { return a.statut === "en_ligne" || a.statut === "stock"; }).reduce(function (s, a) { return s + (num(a.cout) || 0); }, 0);
+    h += '<section class="section"><h2>Où est ton argent</h2><div class="bloc">' +
+      '<div class="rangee"><span class="point" style="background:var(--warn-strong)"></span><span class="fl">En attente, colis pas encore payé</span><span class="val">' + esc(eur(attente)) + "</span></div>" +
+      '<div class="rangee"><span class="point" style="background:var(--accent)"></span><span class="fl">Reçu sur la période</span><span class="val">' + esc(eur(b.recu)) + "</span></div>" +
+      '<div class="rangee"><span class="point" style="background:var(--ink)"></span><span class="fl">Stock en ligne, ' + stock.length + " article" + (stock.length > 1 ? "s" : "") + '</span><span class="val">' + esc(eur(stock.reduce(function (s, a) { return s + (num(a.prix) || 0); }, 0))) + "</span></div>" +
+      '<div class="rangee"><span class="point" style="background:var(--line-2)"></span><span class="fl">Argent immobilisé dans le stock</span><span class="val">' + esc(eur(coutStock)) + "</span></div></div>" +
+      (pasLigne.length ? '<p class="note">' + pasLigne.length + " article" + (pasLigne.length > 1 ? "s" : "") + " acheté" + (pasLigne.length > 1 ? "s" : "") + " pas encore en ligne.</p>" : "") + "</section>";
+    h += '<section class="section"><div class="encart chaud">' + ico("info", 18) + "<span><b>À savoir</b> : vendre tes propres affaires n'est pas imposé. Acheter pour revendre, c'est une activité commerciale à déclarer. Vinted signale au fisc les vendeurs qui passent 30 ventes ou 2 000 € dans l'année.</span></div></section>";
+    return h;
+  }
+
+  /* ───────── le Formateur : la méthode, écrite en code ───────── */
+  var REPOSTS_PAR_JOUR = 4;
+  function tailleDescription(a) {
+    var m = String(a.description || "").match(/Taille de l['’]article\s*:\s*([^\n(]+)/i);
+    return m ? m[1].trim() : null;
+  }
+  function incoherenceTaille(a) {
+    var td = tailleDescription(a);
+    if (!td || !a.taille || a.tailleCorrigee) return null;
+    var x = norm(td).replace(/^taille /, ""), y = norm(a.taille).replace(/^taille /, "");
+    if (!x || !y || x === y) return null;
+    if (/unique|enfant|cm|ans|mois/.test(y) || /cm|enfant|mesure|ans/.test(x)) return null;
+    return td;
+  }
+  function horsSaison(a) {
+    var m = new Date().getMonth() + 1, t = norm((a.categorie || "") + " " + (a.titre || ""));
+    var chaud = /(doudoune|manteau|parka|blouson|pull|sweat|jogging|polaire)/.test(t);
+    var froid = /(short|debardeur|maillot de bain|sandale|t shirt)/.test(t);
+    if (chaud) return m >= 3 && m <= 8 ? "hors" : "en";
+    if (froid) return m >= 3 && m <= 8 ? "en" : "hors";
+    return null;
+  }
+  function prixBaisse(p, pct) {
+    var v = (num(p) || 0) * (1 - pct / 100);
+    return v > 5 ? Math.max(1, Math.floor(v) - 0.1) : Math.max(1, Math.round(v * 2) / 2);
+  }
+  function consignesArticle(a) {
+    if (a.statut !== "en_ligne") return [];
+    var c = [], j = joursEnLigne(a), fav = num(a.favoris) || 0, sai = horsSaison(a), rep = num(a.reposts) || 0;
+    if (a.absentVinted) {
+      c.push({ type: "verifier", prio: 0, etiq: "À vérifier", titre: "Vendu ou retiré ?", detail: "Il n'apparaît plus sur ta vitrine Vinted. Dis-moi ce qu'il est devenu." });
+      return c;
+    }
+    var td = incoherenceTaille(a);
+    if (td) c.push({ type: "taille", prio: 1, etiq: "Taille", titre: "Corrige la taille", detail: "L'annonce dit " + a.taille + ", la description dit " + td + ". Un acheteur qui reçoit la mauvaise taille ouvre un litige." });
+    if (j >= 60 && rep >= 2 && fav <= 2) {
+      c.push({ type: "retirer", prio: 4, etiq: "Retirer", titre: "Retire-le ou fais un lot", detail: "Déjà reposté " + rep + " fois, " + fav + " favori" + (fav > 1 ? "s" : "") + ". Mets-le dans un lot avec un article qui marche, ou donne-le." });
+    } else if (j >= 60) {
+      var d = "En ligne depuis " + (j >= 60 ? Math.round(j / 30) + " mois" : j + " jours") + ". Une annonce neuve repasse en haut des recherches : supprime-la, puis remets-la avec une autre première photo.";
+      if (sai === "en") d += " C'est la bonne saison pour cet article.";
+      if (fav >= 5) d += " Ses " + fav + " favoris disparaîtront : garde le même prix ou baisse un peu pour les rattraper.";
+      c.push({ type: "reposter", prio: 2 + (sai === "en" ? 0 : 0.5) - Math.min(fav, 30) / 100, etiq: "Reposter", titre: "Supprime et remets en ligne", detail: d });
+    } else if (j >= 14 && fav >= 5) {
+      c.push({ type: "baisser", pct: 10, prio: 3, etiq: "Baisser", titre: "Baisse à " + eur(prixBaisse(a.prix, 10)), detail: "Il plaît (" + fav + " favoris) mais ne part pas depuis " + j + " jours : c'est le prix qui bloque." });
+    } else if (j >= 30) {
+      c.push({ type: "baisser", pct: 15, prio: 3.5, etiq: "Baisser", titre: "Baisse à " + eur(prixBaisse(a.prix, 15)), detail: "Peu de favoris après " + j + " jours : baisse de 15 % ou change la première photo." });
+    } else if (j < 14 && fav >= 10) {
+      c.push({ type: "garder", prio: 9, etiq: "Garder", titre: "Ne touche à rien", detail: fav + " favoris en " + j + " jours : il va partir. Attends les offres, ne baisse pas." });
+    }
+    if (sai === "hors" && j >= 14 && !c.some(function (x) { return x.type === "reposter"; })) {
+      c.push({ type: "garder", prio: 8, etiq: "Saison", titre: "Hors saison", detail: "Cet article se vend mieux à la saison froide. Garde-le pour la reposter en octobre." });
+    }
+    if ((num(a.hashtags) || 0) > 30 && !a.hashtagsNettoyes) {
+      c.push({ type: "hashtags", prio: 6, etiq: "Description", titre: "Allège les hashtags", detail: a.hashtags + " hashtags, dont beaucoup en néerlandais, espagnol ou italien. Un acheteur français ne les lit pas, et Vinted peut y voir du bourrage de mots-clés. Garde-en 8, en français." });
+    }
+    return c;
+  }
+  function programme() {
+    var t = auj(), toutes = [];
+    liste().forEach(function (a) { consignesArticle(a).forEach(function (c) { c.a = a; toutes.push(c); }); });
+    toutes.sort(function (x, y) { return x.prio - y.prio; });
+    var faitsAuj = liste().filter(function (a) { return a.dateRepost === t; }).length;
+    var quota = Math.max(0, REPOSTS_PAR_JOUR - faitsAuj), baisses = 0;
+    var auj1 = [], ensuite = [], bien = [], hashtags = 0;
+    toutes.forEach(function (c) {
+      if (c.type === "garder") { bien.push(c); return; }
+      if (c.type === "reposter") { if (quota > 0) { quota--; auj1.push(c); } else ensuite.push(c); return; }
+      if (c.type === "baisser") { if (baisses < 2) { baisses++; auj1.push(c); } else ensuite.push(c); return; }
+      if (c.type === "hashtags") { hashtags++; return; }
+      auj1.push(c);
+    });
+    return { aujourdhui: auj1, ensuite: ensuite, bien: bien, faitsAuj: faitsAuj, hashtags: hashtags };
+  }
+  function aFaireAujourdhui() { try { return programme().aujourdhui.length; } catch (x) { return 0; } }
+  function consigneHtml(c, detail) {
+    var a = c.a, bout = "";
+    var vinted = a.url ? '<a class="btn btn-leger" href="' + esc(a.url) + '" target="_blank" rel="noopener">' + ico("externe", 16) + "Vinted</a>" : '<span></span>';
+    if (c.type === "taille") bout = '<button class="btn btn-plein" data-action="fait" data-quoi="taille" data-id="' + esc(a.id) + '">C\'est corrigé</button>';
+    else if (c.type === "reposter") bout = '<button class="btn btn-plein" data-action="fait" data-quoi="reposter" data-id="' + esc(a.id) + '">Reposté</button>';
+    else if (c.type === "baisser") bout = '<button class="btn btn-plein" data-action="fait" data-quoi="baisser" data-prix="' + prixBaisse(a.prix, c.pct) + '" data-id="' + esc(a.id) + '">Baissé à ' + esc(eurC(prixBaisse(a.prix, c.pct))) + "</button>";
+    else if (c.type === "retirer") bout = '<button class="btn btn-plein" data-action="fait" data-quoi="retirer" data-id="' + esc(a.id) + '">Retiré</button>';
+    else if (c.type === "hashtags") bout = '<button class="btn btn-plein" data-action="fait" data-quoi="hashtags" data-id="' + esc(a.id) + '">C\'est fait</button>';
+    else if (c.type === "verifier") { vinted = '<button class="btn btn-leger" data-action="fait" data-quoi="retirer" data-id="' + esc(a.id) + '">Retiré</button>'; bout = '<button class="btn btn-plein" data-action="ouvrir-vente" data-id="' + esc(a.id) + '">Vendu</button>'; }
+    var pied = c.type === "garder" ? "" : '<div class="consigne-pied">' + vinted + bout + "</div>";
+    return '<div class="consigne"><button class="consigne-tete" data-action="ouvrir" data-id="' + esc(a.id) + '">' +
+      '<span class="vignette ' + teinte(a.id) + '">' + photoHtml(a) + "</span>" +
+      '<span class="tx"><span class="etiq e-' + c.type + '">' + esc(c.etiq) + "</span><b>" + esc(c.titre) + "</b><span>" + esc(c.detail) + "</span>" +
+      (detail === false ? "" : "<em>" + esc(a.titre || "Sans titre") + " · " + esc(eur(a.prix)) + (a.favoris != null ? " · " + (num(a.favoris) || 0) + " favoris" : "") + "</em>") + "</span></button>" + pied + "</div>";
+  }
+  function synchroHtml() {
+    var e = S.synchro, d = S.demande;
+    var txt = e && e.derniere ? "Dernière synchro : <b>" + esc(avecJour(String(e.derniere).slice(0, 10))) + " à " + esc(String(new Date(e.derniere).getHours()).padStart(2, "0") + " h " + String(new Date(e.derniere).getMinutes()).padStart(2, "0")) + "</b>" + (e.resume ? "<br>" + esc(e.resume) : "") : "Pas encore de synchro automatique.";
+    var attente = d && d.statut === "en_attente";
+    return '<div class="synchro"><div class="l">' + ico("synchro", 22) + "<span>" + txt + "</span></div>" +
+      (attente ? '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Demande envoyée</b> le " + esc(court(String(d.demandeLe).slice(0, 10))) + ". Claude passe dans les 2 heures, entre 8 h et 22 h, si ton Mac est allumé avec l'app Claude ouverte.</span></div>" : "") +
+      '<button class="btn btn-noir plein" data-action="synchro"' + (attente ? " disabled" : "") + ">" + ico("synchro", 18) + (attente ? "Demande en cours" : "Actualiser mes articles") + "</button></div>";
+  }
+  function vueFormateur() {
+    var h = '<header class="entete"><h1 class="titre">Formateur</h1><p class="sous">Il regarde chaque annonce et te dit quoi faire, jour par jour.</p>' +
+      '<div class="segments" role="group" aria-label="Rubrique"><button data-action="section" data-s="consignes" aria-pressed="' + (F.section === "consignes") + '">Consignes</button><button data-action="section" data-s="objectif" aria-pressed="' + (F.section === "objectif") + '">Objectif</button><button data-action="section" data-s="methode" aria-pressed="' + (F.section === "methode") + '">Méthode</button></div></header>';
+    if (F.section === "objectif") return h + vueObjectif();
+    if (F.section === "methode") return h + vueMethode();
+    var pg = programme();
+    h += synchroHtml();
+    h += '<section class="section"><h2>Aujourd\'hui · ' + pg.aujourdhui.length + "</h2>";
+    if (!pg.aujourdhui.length) h += '<div class="vide" style="margin:0"><b>Rien d\'urgent</b><p>Tes annonces sont en ordre pour aujourd\'hui. Reviens demain, ou demande une synchro.</p></div>';
+    else h += '<div style="display:flex;flex-direction:column;gap:10px">' + pg.aujourdhui.map(function (c) { return consigneHtml(c); }).join("") + "</div>";
+    if (pg.faitsAuj) h += '<p class="note">' + pg.faitsAuj + " article" + (pg.faitsAuj > 1 ? "s" : "") + " reposté" + (pg.faitsAuj > 1 ? "s" : "") + " aujourd'hui. Pas plus de " + REPOSTS_PAR_JOUR + " par jour : Vinted surveille les republications en série.</p>";
+    h += "</section>";
+    if (pg.ensuite.length) h += '<section class="section"><h2>Les jours suivants · ' + pg.ensuite.length + '</h2><div style="display:flex;flex-direction:column;gap:10px">' + pg.ensuite.map(function (c) { return consigneHtml(c); }).join("") + "</div></section>";
+    if (pg.hashtags) h += '<section class="section"><h2>Conseil général</h2><div class="encart">' + ico("info", 18) + "<span><b>" + pg.hashtags + " annonce" + (pg.hashtags > 1 ? "s ont" : " a") + " plus de 30 hashtags</b>, en cinq langues. Un acheteur français ne lit que le début de la description, et Vinted peut y voir du bourrage de mots-clés. Quand tu repostes un article, garde-en 8, en français. L'avis du formateur te donne une description propre à coller.</span></div></section>";
+    if (pg.bien.length) h += '<section class="section"><h2>Ça va bien · ' + pg.bien.length + '</h2><div style="display:flex;flex-direction:column;gap:10px">' + pg.bien.map(function (c) { return consigneHtml(c); }).join("") + "</div></section>";
+    return h;
+  }
+  function vueMethode() {
+    function r(q, t) { return '<div class="regle"><span class="q">' + q + '</span><span class="r">' + t + "</span></div>"; }
+    return '<section class="section" style="margin-top:6px"><h2>Ce que le formateur surveille</h2><div class="bloc">' +
+      r("0 à 13 j", "<b>On laisse vivre.</b> Une annonce neuve a besoin de deux semaines. Beaucoup de favoris vite : ne baisse surtout pas.") +
+      r("14 j et plus", "<b>5 favoris ou plus sans vente</b> : l'article plaît, c'est le prix. Baisse de 10 %.") +
+      r("30 j et plus", "<b>Peu de favoris</b> : baisse de 15 % ou change la première photo.") +
+      r("60 j et plus", "<b>Supprime et remets en ligne.</b> Une annonce neuve repasse en haut des recherches. Change la première photo à chaque fois.") +
+      r("2 reposts", "<b>Toujours rien ?</b> Fais un lot avec un article qui marche, ou donne-le.") +
+      r("Chaque jour", "<b>4 republications au maximum</b>, à la main et espacées. Depuis juillet 2026, Vinted restreint les comptes qui republient en série.") +
+      r("Saison", "<b>Doudounes, pulls, joggings</b> se vendent mieux d'octobre à février. Hors saison, garde-les pour l'automne.") +
+      r("Annonce", "<b>La taille de l'annonce doit être la même que dans la description.</b> Sinon, litige assuré.") +
+      "</div><p class=\"note\">Ce sont des habitudes courantes chez les vendeurs Vinted, pas une loi. Si tes ventes montrent autre chose, dis-le à Claude et on ajuste les seuils.</p></section>" +
+      '<section class="section"><h2>L\'avis sur une annonce</h2><div class="encart">' + ico("formateur", 18) + "<span>Ouvre un article et appuie sur <b>« Avis du formateur »</b> : à la prochaine actualisation, ton Mac regarde la photo et le texte, puis te propose un meilleur titre, une description propre à copier et un prix conseillé.</span></div></section>";
+  }
+
+  /* ───────── objectif et chiffres (rubrique du Formateur) ───────── */
+  function vueObjectif() {
+    var st = stats(), o = st.objectif;
+    var h = "";
+    if (!o || FICHE.editObjectif) {
+      var ob = S.reglages.objectif || {};
+      h += '<form class="objectif" id="form-objectif"><span class="t">Fixe ton objectif Vinted</span>' +
+        '<span style="font-size:14px;color:var(--ink2)">Combien veux-tu gagner avec Vinted, et pour quand ? Pilote calcule le rythme à tenir chaque semaine.</span>' +
+        '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">' +
+        '<label class="champ">Montant en €<input id="obj-montant" inputmode="decimal" required placeholder="1000" value="' + esc(ob.montant != null ? ob.montant : "") + '"></label>' +
+        '<label class="champ">Pour le<input id="obj-date" type="date" required value="' + esc(ob.date || "2027-03-31") + '"></label>' +
+        '<label class="champ" style="grid-column:1 / -1">Déjà gagné avant Pilote, en €<input id="obj-depart" inputmode="decimal" placeholder="0" value="' + esc(ob.depart != null ? ob.depart : "") + '"></label></div>' +
+        '<div style="display:flex;gap:10px">' + (o ? '<button type="button" class="btn btn-leger" data-action="annuler-objectif" style="flex:1">Annuler</button>' : "") +
+        '<button class="btn btn-plein" type="submit" style="flex:1">Enregistrer</button></div></form>';
+    } else {
+      var pct = o.montant > 0 ? Math.min(100, Math.round(100 * o.acquis / o.montant)) : 0;
+      var stCls = "neutre", stTx = "Pas encore de ventes";
+      if (st.nbVendusTotal) {
+        if (o.restant <= 0) { stCls = "bon"; stTx = "Objectif atteint"; }
+        else if (st.rythmeHebdo4sem >= (o.besoinHebdo || 0)) { stCls = "bon"; stTx = "Dans le rythme"; }
+        else if (st.rythmeHebdo4sem >= 0.6 * (o.besoinHebdo || 0)) { stCls = "moyen"; stTx = "Un peu juste"; }
+        else { stCls = "mauvais"; stTx = "En retard sur le rythme"; }
+      }
+      h += '<div class="objectif"><div class="ligne"><span class="statut ' + stCls + '">' + stTx + '</span><button class="btn btn-petit" data-action="modifier-objectif" style="background:var(--bg);color:var(--ink)">Modifier</button></div>' +
+        '<span class="t">' + esc(eurC(o.montant)) + (o.date ? " d'ici le " + esc(long(o.date)) : "") + "</span>" +
+        '<div class="jauge" role="img" aria-label="' + pct + ' % atteint"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="ch"><span>' + esc(eur(o.acquis)) + " gagnés</span><span>" + pct + " %</span></div>" +
+        (o.dontEnAttente ? '<span style="font-size:13px">dont ' + esc(eur(o.dontEnAttente)) + " encore en attente de paiement</span>" : "") + "</div>";
+      if (o.restant > 0 && o.semainesRestantes) {
+        var ventesSem = st.margeMoyenne > 0 ? Math.ceil(o.besoinHebdo / st.margeMoyenne) : null;
+        h += '<section class="section"><h2>Le rythme à tenir</h2><div class="bloc">' +
+          '<div class="rangee"><span class="fl">Il te reste ' + esc(eur(o.restant)) + " en " + o.semainesRestantes + ' semaines</span></div>' +
+          '<div class="rangee"><span class="fl">Il faut gagner par semaine</span><span class="val">' + esc(eur(o.besoinHebdo)) + "</span></div>" +
+          '<div class="rangee"><span class="fl">Ton rythme sur 4 semaines</span><span class="val" style="color:' + (st.rythmeHebdo4sem >= o.besoinHebdo ? "var(--good)" : "var(--warn)") + '">' + esc(eur(st.rythmeHebdo4sem)) + "</span></div>" +
+          (ventesSem ? '<div class="rangee"><span class="fl">Soit environ, au bénéfice moyen actuel</span><span class="val">' + ventesSem + " vente" + (ventesSem > 1 ? "s" : "") + "/sem.</span></div>" : "") + "</div></section>";
+      }
+    }
+    /* plan de la semaine, calculé par l'app */
+    var plan = [];
+    if (st.nbAEnvoyer) plan.push({ act: "onglet", val: "envois", t: "Envoie " + st.nbAEnvoyer + " colis", d: "Un colis en retard fait perdre la vente et abîme ta note." });
+    if (st.nbEndormis) plan.push({ act: "filtre-endormis", t: "Relance " + st.nbEndormis + " article" + (st.nbEndormis > 1 ? "s" : "") + " endormi" + (st.nbEndormis > 1 ? "s" : ""), d: "En ligne depuis 30 jours ou plus : baisse le prix d'environ 15 % ou remonte l'annonce." });
+    if (st.nbPasEnLigne) plan.push({ act: "filtre-stock", t: "Mets en ligne " + st.nbPasEnLigne + " article" + (st.nbPasEnLigne > 1 ? "s" : ""), d: "Un article dans un placard ne rapporte rien." });
+    if (o && o.restant > 0 && st.margeMoyenne > 0) { var k = Math.ceil(o.besoinHebdo / st.margeMoyenne); plan.push({ t: "Vise " + k + " vente" + (k > 1 ? "s" : "") + " cette semaine", d: "C'est ce qu'il faut pour tenir ton objectif, à " + eur(st.margeMoyenne) + " de bénéfice moyen par vente." }); }
+    if (!plan.length) plan.push({ act: "ajouter", t: "Ajoute tes articles", d: "Envoie une capture de ton dressing : l'analyse démarre avec tes premiers chiffres." });
+    h += '<section class="section"><h2>Ta semaine</h2><div class="plan">' + plan.map(function (x, i) {
+      var inner = '<span class="num">' + (i + 1) + '</span><span class="tx"><b>' + esc(x.t) + "</b>" + esc(x.d) + "</span>";
+      return x.act ? '<button data-action="' + x.act + '"' + (x.val ? ' data-onglet="' + x.val + '"' : "") + ">" + inner + ico("suite", 18, 2) + "</button>" : "<div>" + inner + "</div>";
+    }).join("") + "</div></section>";
+    /* indicateurs */
+    var best = st.categories.filter(function (c) { return c.vendus; })[0];
+    h += '<section class="section"><h2>Tes chiffres</h2><div class="indic">' +
+      "<div><span>Délai moyen de vente</span><b>" + (st.delaiMoyenVente != null ? st.delaiMoyenVente + " j" : "à venir") + "</b></div>" +
+      "<div><span>Taux de vente, 4 sem.</span><b>" + (st.tauxVente28j != null ? st.tauxVente28j + " %" : "à venir") + "</b></div>" +
+      "<div><span>Prix de vente moyen</span><b>" + (st.prixMoyenVente != null ? esc(eur(st.prixMoyenVente)) : "à venir") + "</b></div>" +
+      "<div><span>Meilleure catégorie</span><b>" + (best ? esc(best.categorie) : "à venir") + "</b></div>" +
+      "<div><span>Articles en ligne</span><b>" + st.nbEnLigne + "</b></div>" +
+      "<div><span>Valeur en ligne</span><b>" + esc(eur(st.valeurStock)) + "</b></div></div></section>";
+    /* agent analyste */
+    var an = S.analyse, demandee = S.demandeAnalyse && S.demandeAnalyse.statut === "en_attente";
+    h += '<section class="section"><h2>L\'avis de l\'Agent Analyste</h2>';
+    if (an && an.conseils && an.conseils.length) {
+      h += '<div class="bloc">' + an.conseils.map(function (c) { return '<div class="conseil"><b>' + esc(c.titre) + "</b><span>" + esc(c.detail) + "</span></div>"; }).join("") + "</div>" +
+        '<p class="note">Conseils du ' + esc(long(an.date)) + ". Les chiffres viennent de l'app, les idées de Claude.</p>";
+    } else h += '<p class="note">Ton Mac lit tes chiffres et te propose trois actions concrètes pour la semaine.</p>';
+    if (demandee) h += '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Analyse demandée.</b> Ton Mac répond à la prochaine actualisation, dans les 2 heures entre 8 h et 22 h.</span></div>";
+    else h += '<button class="btn btn-noir plein" data-action="analyser">' + (an ? "Refaire l'analyse" : "Demander conseil") + "</button>";
+    h += "</section>";
+    return h;
+  }
+
+  /* ───────── onglet Agents ───────── */
+  function vueAgents() {
+    var etat = "Les agents tournent sur ton Mac, avec Claude. Ils passent dans les 2 heures, entre 8 h et 22 h, quand l'app Claude est ouverte sur ton Mac.";
+    function ag(c, ic, nom, genre, tx) { return '<div class="agent"><span class="ic ' + c + '">' + ico(ic, 20) + '</span><span class="tx"><b>' + nom + ' <span class="genre">' + genre + "</span></b><span>" + tx + "</span></span></div>"; }
+    return '<header class="entete"><div class="ligne"><h1 class="titre">Tes agents</h1><button class="bouton-rond" data-action="onglet" data-onglet="stock" aria-label="Retour au stock">' + ico("croix", 20) + "</button></div>" +
+      '<p class="sous">Les agents proposent, tu valides. Aucun chiffre n\'entre sans ton accord.</p></header>' +
+      '<div style="padding:0 16px;display:flex;flex-direction:column;gap:8px">' +
+      '<div class="encart vert">' + ico("info", 18) + "<span>" + esc(etat) + "</span></div>" +
+      ag("a-achat", "recu", "Agent Achat", "sur ton Mac", "Lit ta commande et crée l'article avec son vrai prix d'achat, protection et port compris.") +
+      ag("a-annonce", "etiquette", "Agent Annonce", "sur ton Mac", "Lit ton annonce ou ton dressing et remplit marque, taille, état, catégorie et prix.") +
+      ag("a-vente", "sac", "Agent Vente", "sur ton Mac", "Lit la notification de vente, passe l'article en vendu et crée le colis avec sa date limite.") +
+      ag("a-relance", "formateur", "Formateur", "calcul de l'app + ton Mac", "Te dit chaque jour quoi faire : reposter, baisser, corriger une taille, garder. Sur un article, ton Mac te propose un meilleur titre, une description et un prix.") +
+      ag("a-analyste", "cible", "Agent Analyste", "sur ton Mac", "Lit tes chiffres et te donne trois actions concrètes pour tenir ton objectif.") +
+      ag("a-compta", "calc", "Agent Compta", "calcul de l'app", "Bénéfice par article, bilan de la semaine et du mois, valeur du stock. Calculé par le code : pas d'erreur de calcul possible.") +
+      ag("a-analyste", "synchro", "Synchro Vinted", "sur ton Mac", "Lit ta vitrine publique Vinted, sans jamais se connecter à ton compte : nouveaux articles, prix, favoris, photos. Il passe quand tu appuies sur « Actualiser », au plus tard dans les 2 heures, si ton Mac est allumé avec l'app Claude ouverte.") +
+      '<p class="note" style="margin-top:6px">Les agents Claude utilisent ton abonnement Claude, déjà payé : 0 € de plus.</p></div>';
+  }
+
+  /* ───────── les fiches plein écran ───────── */
+  var FICHE = { rendre: null, id: null, mode: null, confirmer: false, editObjectif: false, analyseEnCours: false, vendre: false, revueEnCours: null };
+  function ouvrirFiche(fn, mode) {
+    FICHE.rendre = fn; FICHE.confirmer = false; FICHE.vendre = false; FICHE.mode = mode || null;
+    $("#feuille").hidden = false; document.body.style.overflow = "hidden";
+    fn();
+    var p = $("#panneau"); if (p) p.scrollTop = 0;
+  }
+  function fermerFiche() {
+    if (FICHE.rendre === ficheLecture) rangerCaptures();
+    $("#feuille").hidden = true; document.body.style.overflow = "";
+    FICHE.rendre = null; FICHE.id = null; FICHE.mode = null;
+    if (PROPS.length && PROPS.every(function (p) { return p.etat !== "attente" && p.etat !== "lecture"; })) PROPS = [];
+  }
+  function tete(titre, fermer, extra) {
+    return '<div class="panneau-tete"><button class="icone-btn" data-action="' + (fermer || "fermer") + '" aria-label="' + (fermer === "retour-ajouter" ? "Retour" : "Fermer") + '">' + ico(fermer === "retour-ajouter" ? "retour" : "croix", 22, 2) + '</button><span class="t">' + esc(titre) + "</span>" + (extra || "") + "</div>";
+  }
+
+  /* Ajouter : le choix de la capture */
+  function ficheAjouter() {
+    ouvrirFiche(function () {
+      function choix(ind, ic, c, t, d, ag) {
+        return '<button class="choix" data-action="capture" data-indice="' + ind + '"><span class="ic ' + c + '">' + ico(ic, 24) + '</span><span class="tx"><b>' + t + "</b><span>" + d + "</span><em>" + ag + "</em></span>" + ico("suite", 18, 2) + "</button>";
+      }
+      $("#panneau").innerHTML = tete("Ajouter une capture") + '<div class="panneau-corps">' +
+        '<div style="padding:20px 16px 14px;display:flex;flex-direction:column;gap:6px"><h2 class="titre" style="font-size:25px">Qu\'est-ce que tu m\'envoies ?</h2><p class="sous" style="font-size:15px;color:var(--ink2)">Choisis le type de capture. Ton Mac la lit et te prépare la fiche : tu n\'auras plus qu\'à valider.</p></div>' +
+        '<div style="padding:0 16px;display:flex;flex-direction:column;gap:10px">' +
+        choix("achat", "recu", "a-achat", "J'ai acheté un article", "La commande ou le reçu : prix payé, protection et port compris.", "Agent Achat") +
+        choix("annonce", "etiquette", "a-annonce", "Je mets un article en ligne", "L'annonce et sa description : marque, taille, état, prix.", "Agent Annonce") +
+        choix("vente", "sac", "a-vente", "J'ai vendu", "La notification de vente : prix, date limite, transporteur.", "Agent Vente") + "</div>" +
+        '<div class="depot">' + ico("synchro", 26) + "<b>Synchro : plusieurs captures d'un coup</b><span>Ton dressing, tes ventes, tes achats, mélangés. Chaque agent reconnaît les siennes. Tu peux aussi coller une capture ici.</span>" +
+        '<button class="btn btn-noir" data-action="capture" data-indice="auto">Choisir dans mes photos</button></div>' +
+        '<div style="padding:16px"><button class="btn btn-leger plein" data-action="nouveau-manuel">' + ico("crayon", 18) + "Ajouter à la main</button></div>" +
+        '<p class="note" style="padding:0 16px 24px"><b style="color:var(--ink)">Rappel</b> : ce que tu as déjà en ligne entre à 0 € d\'achat. C\'est du bénéfice pur.</p></div>';
+    }, "ajouter");
+  }
+
+  /* Lecture des captures : l'app les envoie, ton Mac les lit, tu valides les fiches */
+  var CAPTURES = [];
+  /* Une capture d'iPhone pèse 2 à 4 Mo : on la ramène à 2000 px en JPEG, le texte reste lisible. */
+  function reduireImage(f) {
+    return new Promise(function (ok) {
+      var img = new Image(), u = URL.createObjectURL(f);
+      img.onload = function () {
+        var k = Math.min(1, 2000 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(u);
+        c.toBlob(function (b) { ok(b || f); }, "image/jpeg", 0.85);
+      };
+      img.onerror = function () { URL.revokeObjectURL(u); ok(f); };
+      img.src = u;
+    });
+  }
+  function lireCaptures(fichiers, indice) {
+    var l = Array.from(fichiers || []).filter(function (f) { return /^image\//.test(f.type); }).slice(0, 10);
+    if (!l.length) return;
+    if (DEMO) { toast("Mode démo : les captures ne partent pas."); return; }
+    CAPTURES = l.map(function (f) { return { f: f, url: URL.createObjectURL(f), etat: "attente", msg: "" }; });
+    PROPS = [];
+    ouvrirFiche(ficheEnvoi);
+    var ops = [], i = 0;
+    (function suivante() {
+      if (i >= CAPTURES.length) {
+        if (!ops.length) { rendreSiEnvoi(); return; }
+        ops.push({ op: "update", chemin: "synchro/demande", donnees: { demandeLe: new Date().toISOString(), statut: "en_attente" } });
+        ecrire(ops).then(rendreSiEnvoi, function () {
+          CAPTURES.forEach(function (c) { if (c.etat === "fait") { c.etat = "erreur"; c.msg = "Pas enregistrée, renvoie-la."; } });
+          rendreSiEnvoi();
+        });
+        return;
+      }
+      var c = CAPTURES[i++]; c.etat = "lecture"; rendreSiEnvoi();
+      reduireImage(c.f).then(function (b) {
+        return appel("photo", { method: "POST", query: "&dossier=captures", headers: { "content-type": b.type || "image/jpeg" }, body: b });
+      }).then(function (j) {
+        ops.push({ op: "set", chemin: "captures/" + uid(), donnees: { photo: j.id, indice: indice, statut: "a_lire", envoyeeLe: new Date().toISOString() } });
+        c.etat = "fait"; c.msg = "Envoyée à ton Mac";
+      }).catch(function (e) {
+        c.etat = "erreur"; c.msg = e && e.code === "reseau" ? "Pas de réseau" : (e && e.message) || "Pas envoyée";
+      }).then(suivante);
+    })();
+  }
+  function ligneCapture(c) {
+    var st = c.etat === "lecture" ? '<span class="roue"></span>' : c.etat === "fait" ? '<span style="color:var(--good)">' + ico("ok", 20, 2.4) + "</span>" : c.etat === "erreur" ? '<span style="color:var(--bad)">' + ico("info", 20) + "</span>" : "";
+    var tx = c.etat === "attente" ? "En attente" : c.etat === "lecture" ? "Envoi en cours" : c.msg;
+    return '<div class="capture">' + (c.url ? '<img src="' + c.url + '" alt="Capture envoyée">' : '<span class="ic-cap">' + ico("images", 22) + "</span>") +
+      '<span class="fl">Capture<small>' + esc(tx) + "</small></span>" + st + "</div>";
+  }
+  function ficheEnvoi() {
+    var enCours = CAPTURES.some(function (c) { return c.etat === "attente" || c.etat === "lecture"; });
+    var parties = CAPTURES.filter(function (c) { return c.etat === "fait"; }).length;
+    var h = tete(enCours ? "Envoi des captures…" : "Captures envoyées") + '<div class="panneau-corps"><div style="padding:12px 16px">' + CAPTURES.map(ligneCapture).join("") + "</div>";
+    if (!enCours && parties) {
+      h += '<div style="padding:4px 16px 24px;display:flex;flex-direction:column;gap:12px"><div class="encart vert">' + ico("horloge", 18) +
+        "<span><b>Ton Mac les lit à la prochaine actualisation</b>, dans les 2 heures entre 8 h et 22 h, quand l'app Claude est ouverte. Les fiches t'attendront en haut de ton stock : tu n'auras qu'à valider.</span></div>" +
+        '<button class="btn btn-plein plein" data-action="fermer">Compris</button></div>';
+    }
+    $("#panneau").innerHTML = h + "</div>";
+  }
+  function rendreSiEnvoi() { if (FICHE.rendre === ficheEnvoi) ficheEnvoi(); }
+  function bandeauCaptures() {
+    var lues = S.captures.filter(function (c) { return c.statut === "lue"; }).length;
+    var att = S.captures.filter(function (c) { return c.statut === "a_lire"; }).length;
+    if (lues) return '<div style="padding:12px 16px 0"><button class="choix" data-action="valider-captures"><span class="ic a-annonce">' + ico("images", 24) + '</span><span class="tx"><b>' + lues + " capture" + (lues > 1 ? "s lues" : " lue") + "</b><span>Ton Mac a préparé les fiches. Vérifie-les, puis valide.</span></span>" + ico("suite", 18, 2) + "</button></div>";
+    if (att) return '<div style="padding:12px 16px 0"><div class="encart">' + ico("horloge", 18) + "<span><b>" + att + " capture" + (att > 1 ? "s attendent" : " attend") + " ton Mac.</b> Il les lit à la prochaine actualisation.</span></div></div>";
+    return "";
+  }
+  function ouvrirValidation() {
+    var lues = S.captures.filter(function (c) { return c.statut === "lue"; });
+    PROPS = [];
+    CAPTURES = lues.map(function (c) {
+      var avant = PROPS.length, n = versPropositions(c.resultat, null, c.indice || "auto");
+      PROPS.slice(avant).forEach(function (p) { p.capture = c.id; });
+      return { id: c.id, url: "", etat: "fait", msg: n ? n + " article" + (n > 1 ? "s" : "") + " trouvé" + (n > 1 ? "s" : "") : (c.resultat && c.resultat.remarque) || "Aucun article reconnu" };
+    });
+    ouvrirFiche(ficheLecture);
+  }
+  /* Une capture dont toutes les fiches sont rangées ou ignorées disparaît, avec son image. */
+  function rangerCaptures() {
+    var ops = [];
+    CAPTURES.forEach(function (c) {
+      if (!c.id || c.range) return;
+      var siennes = PROPS.filter(function (p) { return p.capture === c.id; });
+      if (siennes.every(function (p) { return p.etat === "fait" || p.etat === "ignore"; })) { c.range = true; ops.push({ op: "delete", chemin: "captures/" + c.id }); }
+    });
+    if (ops.length) ecrire(ops).catch(function () {});
+  }
+  function rendreSiLecture() { if (FICHE.rendre === ficheLecture) ficheLecture(); }
+  var NOMS_AGENT = { achat: ["Agent Achat", "a-achat"], annonce: ["Agent Annonce", "a-annonce"], vente: ["Agent Vente", "a-vente"] };
+  function score(e, a) {
+    function mots(x) { return norm((x.titre || "") + " " + (x.marque || "")).split(" ").filter(function (w) { return w.length > 1; }); }
+    var A = mots(e), B = mots(a); if (!A.length || !B.length) return 0;
+    var setB = {}; B.forEach(function (w) { setB[w] = 1; });
+    var inter = A.filter(function (w) { return setB[w]; }).length;
+    var s = inter / Math.max(A.length, B.length);
+    var pe = num(e.prix), pa = num(a.prix);
+    if (pe != null && pa != null && Math.abs(pe - pa) < 0.01) s += 0.25;
+    return s;
+  }
+  function candidats(e, statuts) {
+    return liste().filter(function (a) { return statuts.indexOf(a.statut) >= 0; })
+      .map(function (a) { return { a: a, s: score(e, a) }; })
+      .filter(function (x) { return x.s >= 0.34; }).sort(function (x, y) { return y.s - x.s; }).slice(0, 3);
+  }
+  function versPropositions(r, fichier, indice) {
+    if (!r || typeof r !== "object" || !Array.isArray(r.articles)) return 0;
+    var type = ["achat", "annonce", "vente", "liste"].indexOf(r.type) >= 0 ? r.type : (indice !== "auto" ? indice : "autre");
+    if (type === "autre") return 0;
+    var arts = r.articles.filter(function (x) { return x && typeof x === "object"; }).slice(0, 40);
+    var unique = arts.length === 1 && type !== "liste";
+    arts.forEach(function (e) {
+      var t = type === "liste" ? (e.statutVinted === "vendu" ? "vente" : "annonce") : type;
+      var cands = t === "vente" ? candidats(e, ["en_ligne", "stock"]) : t === "annonce" ? candidats(e, ["stock", "en_ligne"]) : [];
+      var action = "nouveau";
+      if (cands.length && cands[0].s >= 0.5) action = (t === "vente" ? "vendu:" : "maj:") + cands[0].a.id;
+      PROPS.push({
+        cle: uid(), type: t, action: action, cands: cands.map(function (x) { return { id: x.a.id, titre: x.a.titre || "Sans titre", prix: x.a.prix }; }),
+        c: {
+          titre: e.titre || "", marque: e.marque || "", taille: e.taille || "", etat: e.etat || "", categorie: e.categorie || "",
+          prix: num(e.prix), cout: num(e.cout), date: valide(e.date) ? e.date : "", dateLimite: valide(e.dateLimite) ? e.dateLimite : "", transporteur: e.transporteur || ""
+        },
+        incertain: Array.isArray(e.incertain) ? e.incertain.map(String) : [],
+        remarque: type === "liste" ? "" : String(r.remarque || ""),
+        fichier: unique ? fichier : null, etat: "attente"
+      });
+    });
+    return arts.length;
+  }
+  function ficheLecture() {
+    PROPS.forEach(function (p) { if (p.etat === "attente" && document.querySelector('[data-cle="' + p.cle + '"]')) lireChamps(p); });
+    var enCours = CAPTURES.some(function (c) { return c.etat === "attente" || c.etat === "lecture"; });
+    var restantes = PROPS.filter(function (p) { return p.etat === "attente"; }).length;
+    var h = tete(enCours ? "Les agents lisent…" : "Fiches proposées", "fermer", restantes > 1 ? '<button class="btn btn-plein btn-petit" data-action="tout-valider" style="margin-right:8px">Tout valider</button>' : "");
+    h += '<div class="panneau-corps"><div style="padding:12px 16px">' + CAPTURES.map(function (c) {
+      return ligneCapture(c);
+    }).join("") + "</div>";
+    if (PROPS.length) {
+      h += '<div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:12px"><p class="note">Vérifie les cases en orange, puis valide. Rien n\'entre dans ton stock avant.</p>' + PROPS.map(propositionHtml).join("") + "</div>";
+    } else if (!enCours) {
+      h += '<div class="vide"><b>Rien à ranger</b><p>Les agents n\'ont trouvé aucun article sur ces captures. Essaie une capture de la page de l\'article ou de ton dressing.</p></div>';
+    }
+    h += "</div>";
+    $("#panneau").innerHTML = h;
+  }
+  function propositionHtml(p) {
+    var ag = NOMS_AGENT[p.type] || NOMS_AGENT.annonce;
+    if (p.etat === "fait") return '<div class="proposition fait"><div class="fait-ok">' + ico("ok", 20, 2.4) + esc(p.c.titre || "Article") + " rangé</div></div>";
+    if (p.etat === "ignore") return '<div class="proposition fait"><div class="fait-ok" style="color:var(--ink3)">' + esc(p.c.titre || "Article") + " ignoré</div></div>";
+    var opts = '<option value="nouveau"' + (p.action === "nouveau" ? " selected" : "") + ">Nouvel article</option>" + p.cands.map(function (c) {
+      var v = (p.type === "vente" ? "vendu:" : "maj:") + c.id;
+      return '<option value="' + esc(v) + '"' + (p.action === v ? " selected" : "") + ">" + (p.type === "vente" ? "Vendu : " : "Mettre à jour : ") + esc(c.titre) + (c.prix != null ? " (" + esc(eur(c.prix)) + ")" : "") + "</option>";
+    }).join("");
+    function champ(nom, lab, val, type, large) {
+      var dout = p.incertain.indexOf(nom) >= 0;
+      return '<label class="champ' + (dout ? " douteux" : "") + (large ? " large" : "") + '">' + lab + (dout ? " · à vérifier" : "") +
+        '<input data-cle="' + p.cle + '" data-champ="' + nom + '" ' + (type === "date" ? 'type="date"' : type === "prix" ? 'inputmode="decimal"' : 'type="text"') + ' value="' + esc(val == null ? "" : val) + '"></label>';
+    }
+    var corps = champ("titre", "Titre", p.c.titre, "t", true) + champ("marque", "Marque", p.c.marque) + champ("taille", "Taille", p.c.taille) + champ("etat", "État", p.c.etat) + champ("categorie", "Catégorie", p.c.categorie);
+    if (p.type === "achat") corps += champ("cout", "Payé au total, €", p.c.cout, "prix") + champ("date", "Acheté le", p.c.date, "date");
+    else if (p.type === "annonce") corps += champ("prix", "Prix demandé, €", p.c.prix, "prix") + champ("cout", "Coût d'achat, €", p.c.cout == null && p.action === "nouveau" ? 0 : p.c.cout, "prix");
+    else corps += champ("prix", "Vendu, €", p.c.prix, "prix") + champ("dateLimite", "À envoyer avant le", p.c.dateLimite, "date");
+    return '<div class="proposition"><div class="prop-tete"><span class="agent-tag ' + ag[1] + '">' + ag[0] + "</span>" +
+      (p.remarque ? '<span class="rq">' + esc(p.remarque) + "</span>" : "") +
+      '<label class="champ large" style="flex-basis:100%">Où le ranger<select data-cle="' + p.cle + '" data-champ="action">' + opts + '<option value="ignorer">Ignorer</option></select></label></div>' +
+      '<div class="prop-corps">' + corps + "</div>" +
+      '<div class="prop-pied"><button class="btn btn-leger" data-action="ignorer-prop" data-cle="' + p.cle + '">Ignorer</button><button class="btn btn-plein" data-action="valider-prop" data-cle="' + p.cle + '">Valider</button></div></div>';
+  }
+  function lireChamps(p) {
+    document.querySelectorAll('[data-cle="' + p.cle + '"]').forEach(function (el) {
+      var n = el.getAttribute("data-champ");
+      if (n === "action") p.action = el.value;
+      else if (n === "prix" || n === "cout") p.c[n] = num(el.value);
+      else p.c[n] = el.value.trim();
+    });
+  }
+  function appliquer(p) {
+    lireChamps(p);
+    if (p.action === "ignorer") { p.etat = "ignore"; return Promise.resolve(); }
+    var t = auj(), c = p.c, a, nouveau = false;
+    var id = p.action.indexOf(":") > 0 ? p.action.split(":")[1] : null;
+    if (id && S.articles.get(id)) a = Object.assign({}, S.articles.get(id));
+    else { a = { id: uid(), creeLe: new Date().toISOString(), source: "capture" }; nouveau = true; }
+    ["titre", "marque", "taille", "etat", "categorie", "transporteur"].forEach(function (k) { if (c[k]) a[k] = c[k]; });
+    if (p.type === "achat") {
+      a.statut = a.statut || "stock"; if (nouveau) a.statut = "stock";
+      a.cout = c.cout != null ? c.cout : (a.cout || 0); a.dateAchat = c.date || a.dateAchat || t;
+    } else if (p.type === "annonce") {
+      if (c.prix != null) a.prix = c.prix;
+      if (nouveau || a.statut === "stock" || !a.statut) { a.statut = "en_ligne"; a.dateEnLigne = a.dateEnLigne || c.date || t; }
+      if (nouveau) a.cout = c.cout != null ? c.cout : 0;
+      else if (c.cout != null) a.cout = c.cout;
+    } else {
+      a.statut = "vendu"; a.prixVente = c.prix != null ? c.prix : (a.prix != null ? a.prix : null);
+      a.dateVente = c.date || t; a.dateLimite = c.dateLimite || plusOuvres(a.dateVente, 5);
+      if (nouveau) { a.cout = 0; a.prix = a.prixVente; }
+      a.coches = [false, false, false];
+    }
+    return enregistrer(a).then(function () { p.etat = "fait"; });
+  }
+
+  /* Fiche article */
+  function ficheArticle(id) {
+    FICHE.id = id;
+    ouvrirFiche(function () {
+      var a = S.articles.get(FICHE.id);
+      if (!a) { fermerFiche(); return; }
+      var t = auj();
+      var m = estVendu(a) ? marge(a) : null;
+      var arg = '<div class="argent"><div><span>Coût</span><b>' + esc(eur(a.cout || 0)) + "</b></div>" +
+        "<div><span>" + (estVendu(a) ? "Vendu" : "Prix") + "</span><b>" + esc(estVendu(a) ? eur(a.prixVente) : a.prix != null ? eur(a.prix) : "à fixer") + "</b></div>" +
+        '<div class="' + (m == null ? "" : m >= 0 ? "bon" : "mauvais") + '"><span>' + (m == null ? "Bénéfice visé" : "Bénéfice") + "</span><b>" + esc(m == null ? (a.prix != null ? signe((num(a.prix) || 0) - (num(a.cout) || 0)) : "?") : signe(m)) + "</b></div></div>";
+      var etapes = [
+        { ok: !!a.dateAchat || (a.cout || 0) === 0 || a.statut !== "stock", t: a.dateAchat ? "Acheté le " + court(a.dateAchat) : "Déjà à toi", d: a.dateAchat ? "pour " + eur(a.cout || 0) : "entré à 0 € d'achat" },
+        { ok: a.statut !== "stock", t: "En ligne", d: a.dateEnLigne ? "depuis le " + court(a.dateEnLigne) + (a.statut === "en_ligne" ? ", " + joursEnLigne(a) + " j" : "") : "" },
+        { ok: estVendu(a), t: estVendu(a) ? "Vendu " + eur(a.prixVente) : "Vendu", d: estVendu(a) ? "le " + court(a.dateVente) + (a.statut === "vendu" && a.dateLimite ? ", à envoyer avant le " + court(a.dateLimite) : "") : "" },
+        { ok: a.statut === "envoye" || a.statut === "paye", t: "Envoyé", d: a.dateEnvoi ? "le " + court(a.dateEnvoi) : a.statut === "vendu" ? "c'est la prochaine étape" : "" },
+        { ok: a.statut === "paye", t: "Argent reçu", d: a.datePaiement ? "le " + court(a.datePaiement) : "quand l'acheteur confirme la réception" }
+      ];
+      var ici = etapes.findIndex(function (e) { return !e.ok; });
+      var parc = etapes.map(function (e, i) {
+        var cls = e.ok ? "fait" : i === ici && a.statut !== "stock" && a.statut !== "en_ligne" ? "ici" : "pas-fait";
+        return '<div class="etape ' + cls + '"><div class="rail"><span class="rond">' + (e.ok ? ico("ok", 13, 3) : "") + "</span>" + (i < etapes.length - 1 ? '<span class="trait"></span>' : "") + '</div><div class="tx"><b>' + esc(e.t) + "</b>" + (e.d ? "<span>" + esc(e.d) + "</span>" : "") + "</div></div>";
+      }).join("");
+      var act = "";
+      if (FICHE.vendre) {
+        act += '<form class="bloc" id="form-vente" style="padding:14px;display:flex;flex-direction:column;gap:10px"><b>Marquer comme vendu</b>' +
+          '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"><label class="champ">Vendu, €<input id="v-prix" inputmode="decimal" required value="' + esc(a.prix != null ? a.prix : "") + '"></label>' +
+          '<label class="champ">Vendu le<input id="v-date" type="date" required value="' + t + '"></label>' +
+          '<label class="champ" style="grid-column:1 / -1">À envoyer avant le<input id="v-limite" type="date" required value="' + plusOuvres(t, 5) + '"></label></div>' +
+          '<div class="duo" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"><button type="button" class="btn btn-leger" data-action="annuler-vente">Annuler</button><button class="btn btn-plein" type="submit">Valider</button></div></form>';
+      } else if (a.statut === "stock") {
+        act += '<button class="btn btn-plein plein" data-action="mettre-en-ligne">' + ico("etiquette", 20) + "Je l'ai mis en ligne</button>";
+      } else if (a.statut === "en_ligne") {
+        consignesArticle(a).forEach(function (c) { c.a = a; act += consigneHtml(c, false); });
+        act += '<button class="btn btn-plein plein" data-action="vendre">' + ico("sac", 20) + "Il est vendu</button>";
+      } else if (a.statut === "vendu") {
+        act += '<button class="btn btn-plein plein" data-action="deposer" data-id="' + esc(a.id) + '">' + ico("colis", 20) + "Colis déposé</button>";
+      } else if (a.statut === "envoye") {
+        act += '<button class="btn btn-plein plein" data-action="recu" data-id="' + esc(a.id) + '">Argent reçu</button>';
+      }
+      if (FICHE.confirmer) {
+        act += '<div class="confirm">Supprimer cet article de Pilote ? Ses chiffres quittent aussi la compta.<div class="duo" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"><button class="btn btn-leger" data-action="annuler-suppr">Garder</button><button class="btn btn-danger" data-action="supprimer">Supprimer</button></div></div>';
+      } else {
+        act += '<div class="duo"><button class="btn btn-leger" data-action="modifier">' + ico("crayon", 18) + 'Modifier</button><button class="btn btn-leger" data-action="demander-suppr" style="color:var(--bad)">' + ico("poubelle", 18) + "Supprimer</button></div>";
+        if (a.statut === "en_ligne" || a.statut === "stock") act += '<button class="btn btn-leger plein" data-action="retirer">Retiré de la vente</button>';
+      }
+      $("#panneau").innerHTML = '<div class="panneau-corps"><div class="grande-photo ' + teinte(a.id) + '">' + photoHtml(a, "silh") +
+        '<button class="retour" data-action="fermer" aria-label="Retour">' + ico("retour", 20, 2) + "</button>" + pastille(a) + "</div>" +
+        '<div style="padding:16px 16px 12px;display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:21px">' + esc(a.titre || "Sans titre") + '</h2><span style="font-size:14px;color:var(--ink3)">' + esc([a.marque, a.taille, a.etat, a.couleur].filter(Boolean).join(" · ")) + "</span>" +
+        ((a.favoris != null || a.url) ? '<span style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:14px;color:var(--ink2)">' +
+          (a.favoris != null ? '<span style="display:inline-flex;align-items:center;gap:5px">' + ico("coeur", 16, 2) + (num(a.favoris) || 0) + " favoris</span>" : "") +
+          (a.statut === "en_ligne" && a.dateEnLigne ? "<span>" + (a.dateEnLigneApprox ? "environ " : "") + joursEnLigne(a) + " j en ligne</span>" : "") +
+          (a.url ? '<a class="lien-vinted" href="' + esc(a.url) + '" target="_blank" rel="noopener">' + ico("externe", 16) + "Voir sur Vinted</a>" : "") + "</span>" : "") + "</div>" +
+        arg + '<div style="padding:18px 16px 10px"><span style="font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3)">Son parcours</span></div>' +
+        '<div class="parcours">' + parc + '</div><div class="actions" style="padding-top:6px">' + act + "</div>" +
+        revueHtml(a) +
+        (a.description ? '<section class="section"><h2>Sa description sur Vinted</h2><div class="desc">' + esc(a.description) + "</div>" + (a.hashtags ? '<p class="note">+ ' + esc(a.hashtags) + " hashtags</p>" : "") + "</section>" : "") +
+        '<div style="height:32px"></div></div>';
+    });
+  }
+  function revueHtml(a) {
+    if (a.statut !== "en_ligne" && a.statut !== "stock") return "";
+    var h = '<section class="section"><h2>Avis du formateur</h2>';
+    var r = a.revue;
+    if (r && r.titre) {
+      h += '<div class="revue">' +
+        '<div class="bloc-texte"><small>Titre conseillé</small><p>' + esc(r.titre) + '</p><button class="btn btn-leger" data-action="copier" data-quoi="titre">' + ico("copier", 16) + "Copier</button></div>" +
+        '<div class="bloc-texte"><small>Description à coller</small><p>' + esc(r.description) + '</p><button class="btn btn-leger" data-action="copier" data-quoi="description">' + ico("copier", 16) + "Copier</button></div>" +
+        (r.prix != null ? '<div class="bloc-texte"><small>Prix conseillé</small><p><b>' + esc(eur(r.prix)) + "</b>" + (r.pourquoiPrix ? " · " + esc(r.pourquoiPrix) : "") + "</p></div>" : "") +
+        (r.conseils && r.conseils.length ? '<div class="bloc-texte"><small>Ses conseils</small><p>' + r.conseils.map(function (c) { return "• " + esc(c); }).join("\n") + "</p></div>" : "") +
+        '</div><p class="note">Avis du ' + esc(long(r.date)) + ". Relis avant de coller : c'est une proposition, pas une vérité.</p>";
+    } else {
+      h += '<p class="note">Ton Mac regarde ta première photo et ton texte, puis te propose un meilleur titre, une description propre et un prix.</p>';
+    }
+    if (a.revueDemandee) h += '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Avis demandé.</b> Ton Mac le prépare à la prochaine actualisation, dans les 2 heures entre 8 h et 22 h.</span></div>";
+    else h += '<button class="btn btn-noir plein" data-action="revue">' + ico("formateur", 18) + (r && r.titre ? "Redemander un avis" : "Demander l'avis du formateur") + "</button>";
+    return h + "</section>";
+  }
+  function demanderRevue(id) {
+    var a = S.articles.get(id);
+    if (!a || a.revueDemandee) return;
+    var t = new Date().toISOString();
+    S.articles.set(id, Object.assign({}, a, { revueDemandee: t, majLe: t }));
+    if (FICHE.rendre) FICHE.rendre();
+    ecrire([{ op: "update", chemin: "articles/" + id, donnees: { revueDemandee: t, majLe: t } },
+            { op: "update", chemin: "synchro/demande", donnees: { demandeLe: t, statut: "en_attente" } }])
+      .then(function () { toast("Demande envoyée à ton Mac"); }).catch(function () {});
+  }
+  function demanderSynchro() {
+    var t = new Date().toISOString();
+    S.demande = Object.assign({}, S.demande, { demandeLe: t, statut: "en_attente", vitrine: true }); rendre();
+    ecrire([{ op: "update", chemin: "synchro/demande", donnees: { demandeLe: t, statut: "en_attente", vitrine: true } }])
+      .then(function () { toast("Demande envoyée à ton Mac"); }).catch(function () {});
+  }
+
+  /* Formulaire complet */
+  function ficheFormulaire(id) {
+    var a = id ? Object.assign({}, S.articles.get(id)) : { id: uid(), statut: "en_ligne", cout: 0, dateEnLigne: auj(), creeLe: new Date().toISOString(), source: "main" };
+    ouvrirFiche(function () {
+      function ch(n, lab, v, type, large) {
+        return '<label class="champ' + (large ? " large" : "") + '">' + lab + '<input id="f-' + n + '" ' + (type === "date" ? 'type="date"' : type === "prix" ? 'inputmode="decimal"' : 'type="text"') + ' value="' + esc(v == null ? "" : v) + '"></label>';
+      }
+      var st = [["stock", "Pas encore en ligne"], ["en_ligne", "En ligne"], ["vendu", "Vendu, à envoyer"], ["envoye", "Envoyé"], ["paye", "Payé"], ["retire", "Retiré"]];
+      $("#panneau").innerHTML = tete(id ? "Modifier l'article" : "Nouvel article") + '<form class="panneau-corps" id="form-article" data-id="' + esc(a.id) + '">' +
+        '<div class="prop-corps" style="padding:16px">' +
+        ch("titre", "Titre", a.titre, "t", true) + ch("marque", "Marque", a.marque) + ch("categorie", "Catégorie", a.categorie) + ch("taille", "Taille", a.taille) + ch("etat", "État", a.etat) +
+        '<label class="champ large">Où il en est<select id="f-statut">' + st.map(function (s) { return '<option value="' + s[0] + '"' + (a.statut === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") + "</select></label>" +
+        ch("prix", "Prix demandé, €", a.prix, "prix") + ch("cout", "Coût d'achat, €", a.cout, "prix") +
+        ch("dateAchat", "Acheté le", a.dateAchat, "date") + ch("dateEnLigne", "En ligne le", a.dateEnLigne, "date") +
+        ch("prixVente", "Vendu, €", a.prixVente, "prix") + ch("dateVente", "Vendu le", a.dateVente, "date") +
+        ch("dateLimite", "À envoyer avant le", a.dateLimite, "date") + ch("dateEnvoi", "Envoyé le", a.dateEnvoi, "date") +
+        ch("datePaiement", "Payé le", a.datePaiement, "date") + ch("transporteur", "Transporteur", a.transporteur) +
+        '</div><p class="note" style="padding:0 16px">Laisse le coût à 0 si l\'article t\'appartenait déjà.</p>' +
+        '<div class="panneau-pied" style="border-top:0"><button type="button" class="btn btn-leger" data-action="fermer">Annuler</button><button class="btn btn-plein" type="submit">Enregistrer</button></div></form>';
+    }, "form");
+  }
+  function sauverFormulaire(form) {
+    var id = form.getAttribute("data-id");
+    var a = Object.assign({}, S.articles.get(id) || { id: id, creeLe: new Date().toISOString(), source: "main" });
+    function v(n) { var el = $("#f-" + n); return el ? el.value.trim() : ""; }
+    ["titre", "marque", "categorie", "taille", "etat", "transporteur"].forEach(function (k) { a[k] = v(k) || null; });
+    ["prix", "cout", "prixVente"].forEach(function (k) { a[k] = num(v(k)); });
+    if (a.cout == null) a.cout = 0;
+    ["dateAchat", "dateEnLigne", "dateVente", "dateLimite", "dateEnvoi", "datePaiement"].forEach(function (k) { a[k] = valide(v(k)) ? v(k) : null; });
+    a.statut = v("statut") || "en_ligne";
+    if (!a.titre) { toast("Donne au moins un titre à l'article."); return; }
+    if (estVendu(a) && a.prixVente == null) a.prixVente = a.prix;
+    if (estVendu(a) && !a.dateVente) a.dateVente = auj();
+    if (a.statut === "vendu" && !a.dateLimite) a.dateLimite = plusOuvres(a.dateVente, 5);
+    if (a.statut === "en_ligne" && !a.dateEnLigne) a.dateEnLigne = auj();
+    enregistrer(a).then(function () { toast("Enregistré"); ficheArticle(a.id); }).catch(function () {});
+  }
+
+  /* Agent Analyste : les chiffres partent avec la demande, le Mac répond */
+  function analyser() {
+    if (S.demandeAnalyse && S.demandeAnalyse.statut === "en_attente") return;
+    var t = new Date().toISOString();
+    S.demandeAnalyse = { statut: "en_attente", demandeLe: t }; rendre();
+    ecrire([{ op: "set", chemin: "analyses/demande", donnees: { statut: "en_attente", demandeLe: t, chiffres: stats() } },
+            { op: "update", chemin: "synchro/demande", donnees: { demandeLe: t, statut: "en_attente" } }])
+      .then(function () { toast("Demande envoyée à ton Mac"); }).catch(function () {});
+  }
+
+  /* ───────── petites actions ───────── */
+  function maj(id, champs) {
+    var a = S.articles.get(id); if (!a) return Promise.resolve();
+    return enregistrer(Object.assign({}, a, champs));
+  }
+  var tt = null;
+  function toast(m) { var t = $("#toast"); t.textContent = m; t.hidden = false; clearTimeout(tt); tt = setTimeout(function () { t.hidden = true; }, 3200); }
+  var indiceEnCours = "auto";
+
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-action]"); if (!b || b.disabled) return;
+    var act = b.getAttribute("data-action"), id = b.getAttribute("data-id");
+    switch (act) {
+      case "onglet":
+        F.onglet = b.getAttribute("data-onglet"); try { localStorage.setItem("pilote.onglet", F.onglet); } catch (x) {}
+        try { history.replaceState(null, "", "#" + F.onglet); } catch (x) {}
+        if (!$("#feuille").hidden) fermerFiche();
+        rendre(); window.scrollTo(0, 0); break;
+      case "filtre": F.filtre = b.getAttribute("data-filtre"); rendre(); break;
+      case "filtre-endormis": F.onglet = "stock"; F.filtre = "endormis"; rendre(); window.scrollTo(0, 0); break;
+      case "filtre-stock": F.onglet = "stock"; F.filtre = "stock"; rendre(); window.scrollTo(0, 0); break;
+      case "ajouter": ficheAjouter(); break;
+      case "fermer": fermerFiche(); rendre(); break;
+      case "capture": indiceEnCours = b.getAttribute("data-indice"); var inp = $("#fichiers"); inp.value = ""; inp.click(); break;
+      case "nouveau-manuel": ficheFormulaire(null); break;
+      case "ouvrir": ficheArticle(id); break;
+      case "modifier": ficheFormulaire(FICHE.id); break;
+      case "vendre": FICHE.vendre = true; FICHE.rendre(); break;
+      case "annuler-vente": FICHE.vendre = false; FICHE.rendre(); break;
+      case "mettre-en-ligne": maj(FICHE.id, { statut: "en_ligne", dateEnLigne: auj() }).then(function () { toast("En ligne"); }); break;
+      case "baisser": maj(FICHE.id, { prix: num(b.getAttribute("data-prix")), dateRelance: auj() }).then(function () { toast("Prix baissé. Pense à le changer aussi dans Vinted."); }); break;
+      case "remonter": maj(FICHE.id, { dateEnLigne: auj(), dateRelance: auj() }).then(function () { toast("Compteur remis à zéro"); }); break;
+      case "retirer": maj(FICHE.id, { statut: "retire" }).then(function () { toast("Retiré de la vente"); fermerFiche(); rendre(); }); break;
+      case "deposer": maj(id, { statut: "envoye", dateEnvoi: auj() }).then(function () { toast("Colis déposé. L'argent tombera à la réception."); }); break;
+      case "recu": maj(id, { statut: "paye", datePaiement: auj() }).then(function () { toast("Argent reçu, compté dans ta compta"); }); break;
+      case "demander-suppr": FICHE.confirmer = true; FICHE.rendre(); break;
+      case "annuler-suppr": FICHE.confirmer = false; FICHE.rendre(); break;
+      case "supprimer": var sid = FICHE.id; fermerFiche(); effacer(sid).then(function () { toast("Article supprimé"); rendre(); }); break;
+      case "periode": F.periode = b.getAttribute("data-p"); F.decalage = 0; rendre(); break;
+      case "decaler": F.decalage = Math.min(0, F.decalage + Number(b.getAttribute("data-d"))); rendre(); break;
+      case "modifier-objectif": FICHE.editObjectif = true; rendre(); break;
+      case "annuler-objectif": FICHE.editObjectif = false; rendre(); break;
+      case "analyser": analyser(); break;
+      case "section": F.section = b.getAttribute("data-s"); rendre(); window.scrollTo(0, 0); break;
+      case "synchro": demanderSynchro(); break;
+      case "revue": demanderRevue(FICHE.id); break;
+      case "ouvrir-vente": ficheArticle(id); FICHE.vendre = true; FICHE.rendre(); break;
+      case "copier":
+        var ar = S.articles.get(FICHE.id), txt = ar && ar.revue ? ar.revue[b.getAttribute("data-quoi")] : "";
+        if (!txt) break;
+        try {
+          navigator.clipboard.writeText(txt).then(function () { toast("Copié. Colle-le dans ton annonce Vinted."); }, function () { toast("Copie impossible ici : appuie longuement sur le texte pour le copier."); });
+        } catch (x) { toast("Copie impossible ici : appuie longuement sur le texte pour le copier."); }
+        break;
+      case "valider-captures": ouvrirValidation(); break;
+      case "reessayer": verifierEtat(); break;
+      case "fait":
+        var q = b.getAttribute("data-quoi"), aa = S.articles.get(id);
+        if (!aa) break;
+        b.disabled = true;
+        if (q === "taille") maj(id, { tailleCorrigee: auj() }).then(function () { toast("Noté. Vérifie que la description dit la même taille."); });
+        else if (q === "reposter") maj(id, { dateEnLigne: auj(), dateEnLigneApprox: false, dateRepost: auj(), reposts: (num(aa.reposts) || 0) + 1, favoris: 0, repostEnAttente: true, absentVinted: false }).then(function () { toast("Reposté : le compteur repart de zéro"); });
+        else if (q === "baisser") maj(id, { prix: num(b.getAttribute("data-prix")), dateBaisse: auj() }).then(function () { toast("Prix baissé dans Pilote. Change-le aussi sur Vinted."); });
+        else if (q === "retirer") maj(id, { statut: "retire", absentVinted: false }).then(function () { toast("Retiré de la vente"); });
+        else if (q === "hashtags") maj(id, { hashtagsNettoyes: auj() }).then(function () { toast("Noté"); });
+        break;
+      case "valider-prop": case "ignorer-prop":
+        var p = PROPS.find(function (x) { return x.cle === b.getAttribute("data-cle"); });
+        if (!p) break;
+        if (act === "ignorer-prop") { p.etat = "ignore"; ficheLecture(); rangerCaptures(); break; }
+        b.disabled = true;
+        appliquer(p).then(function () { ficheLecture(); rangerCaptures(); }).catch(function () { b.disabled = false; });
+        break;
+      case "tout-valider":
+        b.disabled = true;
+        var file = PROPS.filter(function (x) { return x.etat === "attente"; });
+        file.forEach(function (x) { lireChamps(x); });
+        (function suite(k) { if (k >= file.length) { ficheLecture(); rangerCaptures(); toast("Tout est rangé"); return; } appliquer(file[k]).catch(function () {}).then(function () { suite(k + 1); }); })(0);
+        break;
+    }
+  });
+  document.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (t.id === "fichiers") { lireCaptures(t.files, indiceEnCours); return; }
+    if (t.getAttribute && t.getAttribute("data-action") === "coche") {
+      var a = S.articles.get(t.getAttribute("data-id")); if (!a) return;
+      var c = (a.coches || [false, false, false]).slice(); c[Number(t.getAttribute("data-i"))] = t.checked;
+      enregistrer(Object.assign({}, a, { coches: c }));
+    }
+  });
+  document.addEventListener("input", function (ev) {
+    if (ev.target.id === "recherche") { F.recherche = ev.target.value; var z = $("#zone-grille"); if (z) z.innerHTML = grilleHtml(); }
+  });
+  document.addEventListener("submit", function (ev) {
+    var f = ev.target; ev.preventDefault();
+    if (f.id === "form-code") envoyerCode();
+    else if (f.id === "form-article") sauverFormulaire(f);
+    else if (f.id === "form-vente") {
+      var prix = num($("#v-prix").value), d = $("#v-date").value, l = $("#v-limite").value;
+      if (prix == null) { toast("Indique le prix de vente."); return; }
+      maj(FICHE.id, { statut: "vendu", prixVente: prix, dateVente: valide(d) ? d : auj(), dateLimite: valide(l) ? l : plusOuvres(auj(), 5), coches: [false, false, false] })
+        .then(function () { FICHE.vendre = false; toast("Vendu ! Le colis attend dans Envois."); });
+    } else if (f.id === "form-objectif") {
+      var m = num($("#obj-montant").value), dt = $("#obj-date").value;
+      if (m == null || m <= 0) { toast("Indique un montant en euros."); return; }
+      S.reglages = Object.assign({}, S.reglages, { objectif: { montant: m, date: valide(dt) ? dt : null, depart: num($("#obj-depart").value) || 0 } });
+      FICHE.editObjectif = false; enregistrerReglages(); rendre(); toast("Objectif enregistré");
+    }
+  });
+  document.addEventListener("paste", function (ev) {
+    if (FICHE.mode === "ajouter" && !$("#feuille").hidden) {
+      var fs = Array.from((ev.clipboardData && ev.clipboardData.files) || []).filter(function (f) { return /^image\//.test(f.type); });
+      if (fs.length) { ev.preventDefault(); lireCaptures(fs, "auto"); }
+    }
+  });
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !$("#feuille").hidden) { fermerFiche(); rendre(); } });
+  document.addEventListener("error", function (ev) { var t = ev.target; if (t && t.tagName === "IMG" && t.src.indexOf(PHOTOS) === 0) t.remove(); }, true);
+  $("#feuille").addEventListener("click", function (ev) { if (ev.target.id === "feuille") { fermerFiche(); rendre(); } });
+
+  rendre();
+  demarrer();
+})();
+</script>
+</body>
+</html>
