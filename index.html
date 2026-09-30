@@ -477,7 +477,7 @@ body{-webkit-tap-highlight-color:transparent}
   var DEMO = /[?&]demo\b/.test(location.search) && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   var INSTALLEE = window.navigator.standalone === true || !!(window.matchMedia && matchMedia("(display-mode: standalone)").matches);
-  var VERROU = { mode: "chargement", erreur: "", envoi: false, cle: "" };
+  var VERROU = { mode: "chargement", erreur: "", envoi: false, cle: "", lent: false };
   try { S.jeton = localStorage.getItem(CLE_JETON) || ""; } catch (x) {}
   (function () {
     /* le QR code d'installation porte une clé, qui ne sert qu'une fois : pour choisir le code */
@@ -495,18 +495,27 @@ body{-webkit-tap-highlight-color:transparent}
     if (!S.jeton) verifierEtat();
   });
 
-  function appel(action, opts) {
+  /* Un appel qui traîne est coupé au bout de 15 s (60 s pour une image) ; une lecture est retentée une fois. */
+  function appel(action, opts, essai) {
     opts = opts || {};
     var h = Object.assign({}, opts.headers || {});
     if (S.jeton) h["x-pilote-jeton"] = S.jeton;
-    return fetch(API + "?action=" + action + (opts.query || ""), { method: opts.method || "GET", headers: h, body: opts.body, cache: "no-store" })
+    var lecture = (opts.method || "GET") === "GET";
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var minuterie = ctrl ? setTimeout(function () { ctrl.abort(); }, action === "photo" ? 60000 : 15000) : null;
+    return fetch(API + "?action=" + action + (opts.query || ""), { method: opts.method || "GET", headers: h, body: opts.body, cache: "no-store", signal: ctrl ? ctrl.signal : undefined })
       .then(function (r) {
+        clearTimeout(minuterie);
         if (r.status === 401 && action !== "entrer") { oublierJeton(); throw { code: "verrou" }; }
         return r.json().catch(function () { return {}; }).then(function (j) {
           if (!r.ok) throw { code: "http", status: r.status, message: j && j.erreur };
           return j;
         });
-      }, function () { throw { code: "reseau" }; });
+      }, function () {
+        clearTimeout(minuterie);
+        if (lecture && !essai) return appel(action, opts, 1);
+        throw { code: ctrl && ctrl.signal.aborted ? "lent" : "reseau" };
+      });
   }
   function appliquerDocs(docs) {
     var arts = new Map(), caps = [];
@@ -575,7 +584,7 @@ body{-webkit-tap-highlight-color:transparent}
     return ecrire([{ op: "set", chemin: "reglages/general", donnees: propre(S.reglages) }]).catch(function () {});
   }
   function erreurDb(e) {
-    if (e && e.code === "reseau") return "Pas de réseau : rien n'est enregistré. Réessaie quand ça capte.";
+    if (e && (e.code === "reseau" || e.code === "lent")) return "Pas de réseau : rien n'est enregistré. Réessaie quand ça capte.";
     if (e && e.status === 429) return "Trop d'essais. Réessaie dans quelques minutes.";
     return (e && e.message) || "Pas enregistré. Réessaie dans un instant.";
   }
@@ -586,11 +595,19 @@ body{-webkit-tap-highlight-color:transparent}
     try { localStorage.removeItem(CLE_JETON); localStorage.removeItem(CLE_COPIE); } catch (x) {}
     verifierEtat();
   }
-  function verifierEtat() {
-    VERROU.mode = "chargement"; rendre();
-    fetch(API + "?action=etat", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
-      VERROU.mode = j && j.codeDefini ? "entrer" : "definir"; rendre();
-    }).catch(function () { VERROU.mode = "reseau"; rendre(); });
+  function verifierEtat(essai) {
+    essai = essai || 0;
+    VERROU.mode = "chargement"; VERROU.lent = essai > 0; rendre();
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var minuterie = ctrl ? setTimeout(function () { ctrl.abort(); }, 12000) : null;
+    fetch(API + "?action=etat", { cache: "no-store", signal: ctrl ? ctrl.signal : undefined }).then(function (r) { return r.json(); }).then(function (j) {
+      clearTimeout(minuterie);
+      VERROU.mode = j && j.codeDefini ? "entrer" : "definir"; VERROU.lent = false; rendre();
+    }).catch(function () {
+      clearTimeout(minuterie);
+      if (essai < 2) { verifierEtat(essai + 1); return; }
+      VERROU.mode = "reseau"; VERROU.lent = false; rendre();
+    });
   }
   function envoyerCode() {
     var c = String(($("#code") || {}).value || "").trim(), c2 = String(($("#code2") || {}).value || "").trim();
@@ -605,7 +622,7 @@ body{-webkit-tap-highlight-color:transparent}
         rendre(); charger();
       }).catch(function (e) {
         VERROU.envoi = false;
-        VERROU.erreur = e && e.code === "reseau" ? "Pas de réseau. Réessaie quand ça capte." : (e && e.message) || "Ça n'a pas marché. Réessaie.";
+        VERROU.erreur = e && e.code === "reseau" ? "Pas de réseau. Réessaie quand ça capte." : e && e.code === "lent" ? "La connexion a mis trop de temps. Réessaie." : (e && e.message) || "Ça n'a pas marché. Réessaie.";
         rendre();
       });
   }
@@ -724,7 +741,7 @@ body{-webkit-tap-highlight-color:transparent}
   function vueVerrou() {
     var def = VERROU.mode === "definir";
     var h = '<div class="verrou"><span class="marque">' + CINTRE + "</span>";
-    if (VERROU.mode === "chargement") return h + '<h1 class="titre">Pilote</h1><p class="sous" style="display:flex;gap:10px;align-items:center"><span class="roue"></span>Ouverture…</p></div>';
+    if (VERROU.mode === "chargement") return h + '<h1 class="titre">Pilote</h1><p class="sous" style="display:flex;gap:10px;align-items:center"><span class="roue"></span>' + (VERROU.lent ? "La connexion est lente, je réessaie…" : "Ouverture…") + "</p></div>";
     if (VERROU.mode === "reseau") return h + '<h1 class="titre">Pas de réseau</h1><p class="sous">Pilote a besoin d\'internet pour s\'ouvrir.</p><button class="btn btn-plein plein" data-action="reessayer">Réessayer</button></div>';
     if (def && !VERROU.cle) return h + '<h1 class="titre">Pilote n\'a pas encore de code</h1><p class="sous">Scanne le QR code d\'installation avec l\'appareil photo de ton iPhone : c\'est lui qui te laisse choisir ton code.</p></div>';
     var dis = VERROU.envoi ? " disabled" : "";
