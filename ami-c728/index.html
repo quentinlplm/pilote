@@ -14,8 +14,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="icones/icone-32.png">
-<link rel="apple-touch-icon" href="icones/icone-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../icones/icone-32.png">
+<link rel="apple-touch-icon" href="../icones/icone-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
@@ -474,7 +474,7 @@ body{-webkit-tap-highlight-color:transparent}
   var API = "https://ejwcowdrncmrjfwuhurs.supabase.co/functions/v1/pilote";
   var PHOTOS = "https://ejwcowdrncmrjfwuhurs.supabase.co/storage/v1/object/public/pilote-photos/";
   /* Un même code sert plusieurs vendeurs : chacun a son espace, et ses clés à lui dans le navigateur. */
-  var ESPACE = "quentin";
+  var ESPACE = "ami-c728";
   var PREFIXE = ESPACE === "quentin" ? "pilote." : "pilote." + ESPACE + ".";
   var CLE_JETON = PREFIXE + "jeton", CLE_COPIE = PREFIXE + "copie";
   var DEMO = /[?&]demo\b/.test(location.search) && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
@@ -1016,7 +1016,7 @@ body{-webkit-tap-highlight-color:transparent}
     var txt = e && e.derniere ? "Dernière synchro : <b>" + esc(avecJour(String(e.derniere).slice(0, 10))) + " à " + esc(String(new Date(e.derniere).getHours()).padStart(2, "0") + " h " + String(new Date(e.derniere).getMinutes()).padStart(2, "0")) + "</b>" + (e.resume ? "<br>" + esc(e.resume) : "") : "Pas encore de synchro automatique.";
     var attente = d && d.statut === "en_attente";
     return '<div class="synchro"><div class="l">' + ico("synchro", 22) + "<span>" + txt + "</span></div>" +
-      (attente ? '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Demande envoyée</b> le " + esc(court(String(d.demandeLe).slice(0, 10))) + ". Claude passe dans les 2 heures, entre 8 h et 22 h, si ton Mac est allumé avec l'app Claude ouverte.</span></div>" : "") +
+      (attente ? '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Demande envoyée</b> le " + esc(court(String(d.demandeLe).slice(0, 10))) + ". L’agent passe en général dans les 2 heures, entre 9 h et 21 h.</span></div>" : "") +
       '<button class="btn btn-noir plein" data-action="synchro"' + (attente ? " disabled" : "") + ">" + ico("synchro", 18) + (attente ? "Demande en cours" : "Actualiser mes articles") + "</button></div>";
   }
   function vueFormateur() {
@@ -1047,8 +1047,8 @@ body{-webkit-tap-highlight-color:transparent}
       r("Chaque jour", "<b>4 republications au maximum</b>, à la main et espacées. Depuis juillet 2026, Vinted restreint les comptes qui republient en série.") +
       r("Saison", "<b>Doudounes, pulls, joggings</b> se vendent mieux d'octobre à février. Hors saison, garde-les pour l'automne.") +
       r("Annonce", "<b>La taille de l'annonce doit être la même que dans la description.</b> Sinon, litige assuré.") +
-      "</div><p class=\"note\">Ce sont des habitudes courantes chez les vendeurs Vinted, pas une loi. Si tes ventes montrent autre chose, dis-le à Claude et on ajuste les seuils.</p></section>" +
-      '<section class="section"><h2>L\'avis sur une annonce</h2><div class="encart">' + ico("formateur", 18) + "<span>Ouvre un article et appuie sur <b>« Avis du formateur »</b> : à la prochaine actualisation, ton Mac regarde la photo et le texte, puis te propose un meilleur titre, une description propre à copier et un prix conseillé.</span></div></section>";
+      "</div><p class=\"note\">Ce sont des habitudes courantes chez les vendeurs Vinted, pas une loi. Si tes ventes montrent autre chose, dis-le à Quentin et on ajuste les seuils.</p></section>" +
+      '<section class="section"><h2>L\'avis sur une annonce</h2><div class="encart">' + ico("formateur", 18) + "<span>Ouvre un article et appuie sur <b>« Avis du formateur »</b> : à la prochaine actualisation, l’agent regarde la photo et le texte, puis te propose un meilleur titre, une description propre à copier et un prix conseillé.</span></div></section>";
   }
 
   /* ───────── objectif et chiffres (rubrique du Formateur) ───────── */
@@ -1061,7 +1061,7 @@ body{-webkit-tap-highlight-color:transparent}
         '<span style="font-size:14px;color:var(--ink2)">Combien veux-tu gagner avec Vinted, et pour quand ? Pilote calcule le rythme à tenir chaque semaine.</span>' +
         '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">' +
         '<label class="champ">Montant en €<input id="obj-montant" inputmode="decimal" required placeholder="1000" value="' + esc(ob.montant != null ? ob.montant : "") + '"></label>' +
-        '<label class="champ">Pour le<input id="obj-date" type="date" required value="' + esc(ob.date || "2027-03-31") + '"></label>' +
+        '<label class="champ">Pour le<input id="obj-date" type="date" required value="' + esc(ob.date || "") + '"></label>' +
         '<label class="champ" style="grid-column:1 / -1">Déjà gagné avant Pilote, en €<input id="obj-depart" inputmode="decimal" placeholder="0" value="' + esc(ob.depart != null ? ob.depart : "") + '"></label></div>' +
         '<div style="display:flex;gap:10px">' + (o ? '<button type="button" class="btn btn-leger" data-action="annuler-objectif" style="flex:1">Annuler</button>' : "") +
         '<button class="btn btn-plein" type="submit" style="flex:1">Enregistrer</button></div></form>';
@@ -1114,8 +1114,8 @@ body{-webkit-tap-highlight-color:transparent}
     if (an && an.conseils && an.conseils.length) {
       h += '<div class="bloc">' + an.conseils.map(function (c) { return '<div class="conseil"><b>' + esc(c.titre) + "</b><span>" + esc(c.detail) + "</span></div>"; }).join("") + "</div>" +
         '<p class="note">Conseils du ' + esc(long(an.date)) + ". Les chiffres viennent de l'app, les idées de Claude.</p>";
-    } else h += '<p class="note">Ton Mac lit tes chiffres et te propose trois actions concrètes pour la semaine.</p>';
-    if (demandee) h += '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Analyse demandée.</b> Ton Mac répond à la prochaine actualisation, dans les 2 heures entre 8 h et 22 h.</span></div>";
+    } else h += '<p class="note">L’agent lit tes chiffres et te propose trois actions concrètes pour la semaine.</p>';
+    if (demandee) h += '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Analyse demandée.</b> L’agent répond à la prochaine actualisation, en général dans les 2 heures, entre 9 h et 21 h.</span></div>";
     else h += '<button class="btn btn-noir plein" data-action="analyser">' + (an ? "Refaire l'analyse" : "Demander conseil") + "</button>";
     h += "</section>";
     return h;
@@ -1123,20 +1123,20 @@ body{-webkit-tap-highlight-color:transparent}
 
   /* ───────── onglet Agents ───────── */
   function vueAgents() {
-    var etat = "Les agents tournent sur ton Mac, avec Claude. Ils passent dans les 2 heures, entre 8 h et 22 h, quand l'app Claude est ouverte sur ton Mac.";
+    var etat = "Les agents tournent tout seuls, avec Claude. Ils passent en général dans les 2 heures, entre 9 h et 21 h.";
     function ag(c, ic, nom, genre, tx) { return '<div class="agent"><span class="ic ' + c + '">' + ico(ic, 20) + '</span><span class="tx"><b>' + nom + ' <span class="genre">' + genre + "</span></b><span>" + tx + "</span></span></div>"; }
     return '<header class="entete"><div class="ligne"><h1 class="titre">Tes agents</h1><button class="bouton-rond" data-action="onglet" data-onglet="stock" aria-label="Retour au stock">' + ico("croix", 20) + "</button></div>" +
       '<p class="sous">Les agents proposent, tu valides. Aucun chiffre n\'entre sans ton accord.</p></header>' +
       '<div style="padding:0 16px;display:flex;flex-direction:column;gap:8px">' +
       '<div class="encart vert">' + ico("info", 18) + "<span>" + esc(etat) + "</span></div>" +
-      ag("a-achat", "recu", "Agent Achat", "sur ton Mac", "Lit ta commande et crée l'article avec son vrai prix d'achat, protection et port compris.") +
-      ag("a-annonce", "etiquette", "Agent Annonce", "sur ton Mac", "Lit ton annonce ou ton dressing et remplit marque, taille, état, catégorie et prix.") +
-      ag("a-vente", "sac", "Agent Vente", "sur ton Mac", "Lit la notification de vente, passe l'article en vendu et crée le colis avec sa date limite.") +
-      ag("a-relance", "formateur", "Formateur", "calcul de l'app + ton Mac", "Te dit chaque jour quoi faire : reposter, baisser, corriger une taille, garder. Sur un article, ton Mac te propose un meilleur titre, une description et un prix.") +
-      ag("a-analyste", "cible", "Agent Analyste", "sur ton Mac", "Lit tes chiffres et te donne trois actions concrètes pour tenir ton objectif.") +
+      ag("a-achat", "recu", "Agent Achat", "automatique", "Lit ta commande et crée l'article avec son vrai prix d'achat, protection et port compris.") +
+      ag("a-annonce", "etiquette", "Agent Annonce", "automatique", "Lit ton annonce ou ton dressing et remplit marque, taille, état, catégorie et prix.") +
+      ag("a-vente", "sac", "Agent Vente", "automatique", "Lit la notification de vente, passe l'article en vendu et crée le colis avec sa date limite.") +
+      ag("a-relance", "formateur", "Formateur", "calcul de l'app + Claude", "Te dit chaque jour quoi faire : reposter, baisser, corriger une taille, garder. Sur un article, l’agent te propose un meilleur titre, une description et un prix.") +
+      ag("a-analyste", "cible", "Agent Analyste", "automatique", "Lit tes chiffres et te donne trois actions concrètes pour tenir ton objectif.") +
       ag("a-compta", "calc", "Agent Compta", "calcul de l'app", "Bénéfice par article, bilan de la semaine et du mois, valeur du stock. Calculé par le code : pas d'erreur de calcul possible.") +
-      ag("a-analyste", "synchro", "Synchro Vinted", "sur ton Mac", "Lit ta vitrine publique Vinted, sans jamais se connecter à ton compte : nouveaux articles, prix, favoris, photos. Il passe quand tu appuies sur « Actualiser », au plus tard dans les 2 heures, si ton Mac est allumé avec l'app Claude ouverte.") +
-      '<p class="note" style="margin-top:6px">Les agents Claude utilisent ton abonnement Claude, déjà payé : 0 € de plus.</p></div>';
+      ag("a-analyste", "synchro", "Synchro Vinted", "automatique", "Lit ta vitrine publique Vinted, sans jamais se connecter à ton compte : nouveaux articles, prix, favoris, photos. Il passe quand tu appuies sur « Actualiser », en général dans les 2 heures, entre 9 h et 21 h.") +
+      '<p class="note" style="margin-top:6px">Les agents sont gratuits pour toi : 0 € de plus.</p></div>';
   }
 
   /* ───────── les fiches plein écran ───────── */
@@ -1164,7 +1164,7 @@ body{-webkit-tap-highlight-color:transparent}
         return '<button class="choix" data-action="capture" data-indice="' + ind + '"><span class="ic ' + c + '">' + ico(ic, 24) + '</span><span class="tx"><b>' + t + "</b><span>" + d + "</span><em>" + ag + "</em></span>" + ico("suite", 18, 2) + "</button>";
       }
       $("#panneau").innerHTML = tete("Ajouter une capture") + '<div class="panneau-corps">' +
-        '<div style="padding:20px 16px 14px;display:flex;flex-direction:column;gap:6px"><h2 class="titre" style="font-size:25px">Qu\'est-ce que tu m\'envoies ?</h2><p class="sous" style="font-size:15px;color:var(--ink2)">Choisis le type de capture. Ton Mac la lit et te prépare la fiche : tu n\'auras plus qu\'à valider.</p></div>' +
+        '<div style="padding:20px 16px 14px;display:flex;flex-direction:column;gap:6px"><h2 class="titre" style="font-size:25px">Qu\'est-ce que tu m\'envoies ?</h2><p class="sous" style="font-size:15px;color:var(--ink2)">Choisis le type de capture. L’agent la lit et te prépare la fiche : tu n\'auras plus qu\'à valider.</p></div>' +
         '<div style="padding:0 16px;display:flex;flex-direction:column;gap:10px">' +
         choix("achat", "recu", "a-achat", "J'ai acheté un article", "La commande ou le reçu : prix payé, protection et port compris.", "Agent Achat") +
         choix("annonce", "etiquette", "a-annonce", "Je mets un article en ligne", "L'annonce et sa description : marque, taille, état, prix.", "Agent Annonce") +
@@ -1176,7 +1176,7 @@ body{-webkit-tap-highlight-color:transparent}
     }, "ajouter");
   }
 
-  /* Lecture des captures : l'app les envoie, ton Mac les lit, tu valides les fiches */
+  /* Lecture des captures : l'app les envoie, l’agent les lit, tu valides les fiches */
   var CAPTURES = [];
   /* Une capture d'iPhone pèse 2 à 4 Mo : on la ramène à 2000 px en JPEG, le texte reste lisible. */
   function reduireImage(f) {
@@ -1217,7 +1217,7 @@ body{-webkit-tap-highlight-color:transparent}
         return appel("photo", { method: "POST", query: "&dossier=captures", headers: { "content-type": b.type || "image/jpeg" }, body: b });
       }).then(function (j) {
         ops.push({ op: "set", chemin: "captures/" + uid(), donnees: { photo: j.id, indice: indice, statut: "a_lire", envoyeeLe: new Date().toISOString() } });
-        c.etat = "fait"; c.msg = "Envoyée à ton Mac";
+        c.etat = "fait"; c.msg = "Envoyée à l’agent";
       }).catch(function (e) {
         c.etat = "erreur"; c.msg = e && e.code === "reseau" ? "Pas de réseau" : (e && e.message) || "Pas envoyée";
       }).then(suivante);
@@ -1235,7 +1235,7 @@ body{-webkit-tap-highlight-color:transparent}
     var h = tete(enCours ? "Envoi des captures…" : "Captures envoyées") + '<div class="panneau-corps"><div style="padding:12px 16px">' + CAPTURES.map(ligneCapture).join("") + "</div>";
     if (!enCours && parties) {
       h += '<div style="padding:4px 16px 24px;display:flex;flex-direction:column;gap:12px"><div class="encart vert">' + ico("horloge", 18) +
-        "<span><b>Ton Mac les lit à la prochaine actualisation</b>, dans les 2 heures entre 8 h et 22 h, quand l'app Claude est ouverte. Les fiches t'attendront en haut de ton stock : tu n'auras qu'à valider.</span></div>" +
+        "<span><b>L’agent les lit à la prochaine actualisation</b>, en général dans les 2 heures, entre 9 h et 21 h. Les fiches t'attendront en haut de ton stock : tu n'auras qu'à valider.</span></div>" +
         '<button class="btn btn-plein plein" data-action="fermer">Compris</button></div>';
     }
     $("#panneau").innerHTML = h + "</div>";
@@ -1244,8 +1244,8 @@ body{-webkit-tap-highlight-color:transparent}
   function bandeauCaptures() {
     var lues = S.captures.filter(function (c) { return c.statut === "lue"; }).length;
     var att = S.captures.filter(function (c) { return c.statut === "a_lire"; }).length;
-    if (lues) return '<div style="padding:12px 16px 0"><button class="choix" data-action="valider-captures"><span class="ic a-annonce">' + ico("images", 24) + '</span><span class="tx"><b>' + lues + " capture" + (lues > 1 ? "s lues" : " lue") + "</b><span>Ton Mac a préparé les fiches. Vérifie-les, puis valide.</span></span>" + ico("suite", 18, 2) + "</button></div>";
-    if (att) return '<div style="padding:12px 16px 0"><div class="encart">' + ico("horloge", 18) + "<span><b>" + att + " capture" + (att > 1 ? "s attendent" : " attend") + " ton Mac.</b> Il les lit à la prochaine actualisation.</span></div></div>";
+    if (lues) return '<div style="padding:12px 16px 0"><button class="choix" data-action="valider-captures"><span class="ic a-annonce">' + ico("images", 24) + '</span><span class="tx"><b>' + lues + " capture" + (lues > 1 ? "s lues" : " lue") + "</b><span>L’agent a préparé les fiches. Vérifie-les, puis valide.</span></span>" + ico("suite", 18, 2) + "</button></div>";
+    if (att) return '<div style="padding:12px 16px 0"><div class="encart">' + ico("horloge", 18) + "<span><b>" + att + " capture" + (att > 1 ? "s attendent" : " attend") + " l’agent.</b> Il les lit à la prochaine actualisation.</span></div></div>";
     return "";
   }
   function ouvrirValidation() {
@@ -1453,9 +1453,9 @@ body{-webkit-tap-highlight-color:transparent}
         (r.conseils && r.conseils.length ? '<div class="bloc-texte"><small>Ses conseils</small><p>' + r.conseils.map(function (c) { return "• " + esc(c); }).join("\n") + "</p></div>" : "") +
         '</div><p class="note">Avis du ' + esc(long(r.date)) + ". Relis avant de coller : c'est une proposition, pas une vérité.</p>";
     } else {
-      h += '<p class="note">Ton Mac regarde ta première photo et ton texte, puis te propose un meilleur titre, une description propre et un prix.</p>';
+      h += '<p class="note">L’agent regarde ta première photo et ton texte, puis te propose un meilleur titre, une description propre et un prix.</p>';
     }
-    if (a.revueDemandee) h += '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Avis demandé.</b> Ton Mac le prépare à la prochaine actualisation, dans les 2 heures entre 8 h et 22 h.</span></div>";
+    if (a.revueDemandee) h += '<div class="encart vert">' + ico("horloge", 18) + "<span><b>Avis demandé.</b> L’agent le prépare à la prochaine actualisation, en général dans les 2 heures, entre 9 h et 21 h.</span></div>";
     else h += '<button class="btn btn-noir plein" data-action="revue">' + ico("formateur", 18) + (r && r.titre ? "Redemander un avis" : "Demander l'avis du formateur") + "</button>";
     return h + "</section>";
   }
@@ -1467,13 +1467,13 @@ body{-webkit-tap-highlight-color:transparent}
     if (FICHE.rendre) FICHE.rendre();
     ecrire([{ op: "update", chemin: "articles/" + id, donnees: { revueDemandee: t, majLe: t } },
             { op: "update", chemin: "synchro/demande", donnees: { demandeLe: t, statut: "en_attente" } }])
-      .then(function () { toast("Demande envoyée à ton Mac"); }).catch(function () {});
+      .then(function () { toast("Demande envoyée à l’agent"); }).catch(function () {});
   }
   function demanderSynchro() {
     var t = new Date().toISOString();
     S.demande = Object.assign({}, S.demande, { demandeLe: t, statut: "en_attente", vitrine: true }); rendre();
     ecrire([{ op: "update", chemin: "synchro/demande", donnees: { demandeLe: t, statut: "en_attente", vitrine: true } }])
-      .then(function () { toast("Demande envoyée à ton Mac"); }).catch(function () {});
+      .then(function () { toast("Demande envoyée à l’agent"); }).catch(function () {});
   }
 
   /* Formulaire complet */
@@ -1521,7 +1521,7 @@ body{-webkit-tap-highlight-color:transparent}
     S.demandeAnalyse = { statut: "en_attente", demandeLe: t }; rendre();
     ecrire([{ op: "set", chemin: "analyses/demande", donnees: { statut: "en_attente", demandeLe: t, chiffres: stats() } },
             { op: "update", chemin: "synchro/demande", donnees: { demandeLe: t, statut: "en_attente" } }])
-      .then(function () { toast("Demande envoyée à ton Mac"); }).catch(function () {});
+      .then(function () { toast("Demande envoyée à l’agent"); }).catch(function () {});
   }
 
   /* ───────── petites actions ───────── */
